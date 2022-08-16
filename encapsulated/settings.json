@@ -1,0 +1,23 @@
+{
+    "Classes": {
+        "CS202": [
+            2
+        ],
+        "CS218": [
+            2
+        ]
+    },
+    "Subfolders": {
+        "Exams": [],
+        "Testing": [
+            "Guess"
+        ],
+        "One More": [],
+        "Assignments": [
+            "Labs", 
+            "Projects",
+            "Bonus",
+            "Worksheets"
+        ]
+    }
+}
