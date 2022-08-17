@@ -4,6 +4,7 @@ import os
 import csv
 import sys
 from statistics import median
+import json
 
 #vals = sys.argv[1].split(",")
 #vals = [v.strip() for v in vals]
@@ -26,10 +27,28 @@ class ParseIndirect:
 
 	__terminal = None
 
+	__settings = None
+
+	__outcomeClassesList = [[], [], [], [], [], []]
+
 	def __init__(self, resultFile, saveDestination, terminal):
 		self.__numericalDataLocation = resultFile
 		self.__saveDestination = saveDestination
 		self.__terminal = terminal
+
+		fl = open("encapsulated/settings.json", "r")
+		data = json.load(fl)
+		print(data)
+
+		for keys in data["Classes"].keys():
+			print(keys)
+			for out in data["Classes"][keys]:
+				val = int(out)
+				self.__outcomeClassesList[out-1].append(keys)
+
+		self.__settings = data
+
+		print(self.__outcomeClassesList)
 
 	def startReading(self):
 		with open(self.__numericalDataLocation) as file:
@@ -66,54 +85,57 @@ class ParseIndirect:
 
 					#---------------
 					individualLine = list()
-					if line[1] == "CS135" or line[1] == "CS202" or line[1] == "CS218" or line[1] == "CS326" or line[1] == "CS460":
+
+					if line[1] in self.__outcomeClassesList[0]:
+						#outcome 1
+						individualLine.append(1)
+						[individualLine.append(line[i]) for i in range(5, 12)]
+						individualLine.append(med)
+						self.__individualOutcomes["1"].append(individualLine)
+
+					individualLine = list()
+
+					if line[1] in self.__outcomeClassesList[1]:
+						#outcome 2
 						individualLine.append(2)
 						[individualLine.append(line[i]) for i in range(5, 12)]
 						individualLine.append(med)
 						self.__individualOutcomes["2"].append(individualLine)
-					elif line[1] == "CS219" or line[1] == "CS370":
-						individualLine.append(1)
-						[individualLine.append(line[i]) for i in range(5, 12)]
-						individualLine.append(med)
-						self.__individualOutcomes["1"].append(individualLine)
-					elif line[1] == "CS302" or line[1] == "CS477" or line[1] == "CS456":
-						individualLine.append(6)
-						[individualLine.append(line[i]) for i in range(5, 12)]
-						individualLine.append(med)
-						self.__individualOutcomes["6"].append(individualLine)
-					elif line[1] == "CS301":
-						#there are usually two outcomes for this class
+
+					individualLine = list()
+
+					if line[1] in self.__outcomeClassesList[2]:
+						#Outcome 3
 						individualLine.append(3)
 						[individualLine.append(line[i]) for i in range(5, 12)]
 						individualLine.append(med)
 						self.__individualOutcomes["3"].append(individualLine)
 
-						#this is the second outcome
-						individualLine = list()
+					individualLine = list()
+
+					if line[1] in self.__outcomeClassesList[3]:
+						#Outcome 4
 						individualLine.append(4)
 						[individualLine.append(line[i]) for i in range(5, 12)]
 						individualLine.append(med)
 						self.__individualOutcomes["4"].append(individualLine)
-					elif line[1] == "CS472":
-						#there are usually three outcomes for this class
-						individualLine.append(1)
-						[individualLine.append(line[i]) for i in range(5, 12)]
-						individualLine.append(med)
-						self.__individualOutcomes["1"].append(individualLine)
 
-						#this is the second outcome
-						individualLine = list()
-						individualLine.append(3)
-						[individualLine.append(line[i]) for i in range(5, 12)]
-						individualLine.append(med)
-						self.__individualOutcomes["3"].append(individualLine)
+					individualLine = list()
 
-						#this is the third outcome
-						individualLine = list()
+					if line[1] in self.__outcomeClassesList[4]:
+						#Outcome 5
 						individualLine.append(5)
 						[individualLine.append(line[i]) for i in range(5, 12)]
 						individualLine.append(med)
 						self.__individualOutcomes["5"].append(individualLine)
+
+					individualLine = list()
+
+					if line[1] in self.__outcomeClassesList[5]:
+						individualLine.append(6)
+						[individualLine.append(line[i]) for i in range(5, 12)]
+						individualLine.append(med)
+						self.__individualOutcomes["6"].append(individualLine)
 
 	def createResult(self):
 		df = pd.DataFrame(self.__percentageOutcome, columns=self.__headers)
@@ -151,7 +173,6 @@ class ParseIndirect:
 
 
 		med = int(median(volumeData))
-		print("-----------")
 
 		if med == 5:
 			return "E"

@@ -4,6 +4,7 @@ import math
 import pandas as pd
 import os
 import sys
+import json
 
 #vals = sys.argv[1].split(",")
 #vals = [v.strip() for v in vals]
@@ -266,122 +267,5 @@ class ReadIndirect:
 			categories[k].append(numerical)
 
 		return categories
-
-#readInd = readIndirect("/Users/dubliciousbaby/Desktop/indirect_assessment_2/", "results_testing.csv")
-#readInd.startTool()
-
-"""folder = "/Users/dubliciousbaby/Desktop/indirect_assessment_2/" #this is the folder where all the indirect files are stored
-
-files = os.listdir(folder)
-
-header = ["Class", "Section", "Total Students", "No. of Student Responses", "Total Responses", "E", "G", "N", "F", "P", "N/A", "E+G", "average"]
-data = list()
-
-c = 0
-for f in files:
-	if f != ".DS_Store":
-		print("Working on " + f)
-		sys.stdout.flush()
-		clss, sec, text = openReadPDF(folder, f) #open and read the file
-		allPer, stringWithPercentage = findPossiblePercentages(text) #find all possible percentages, and where the total student information is kept
-		sentences = findTheData(text) #find the sentence data where the results are stored
-
-		evaluated, categories = parseData(sentences) #find how many students have been evaluated, and how many the pared data
-
-		#Find the total number of students
-		total = ''
-		i = len(allPer)
-		correctPercentage = -1
-		while i > 0:
-			i -= 1
-
-			#the string returned is where this data is stored
-			if stringWithPercentage.find(evaluated+allPer[i]) != -1:
-				total = stringWithPercentage[0:stringWithPercentage.find(evaluated+allPer[i])]
-				correctPercentage = i #save the index of the correct percentage
-				break
-
-		if total == '':
-			i = len(allPer)
-			while i > 0:
-				i -= 1
-
-				if float(allPer[i]) <= 0.0:
-					continue
-
-				genTotal = 100. * float(evaluated) / float(allPer[i])
-
-				generatedString = str(int(genTotal)) + str(evaluated) + str(allPer[i])
-
-				if stringWithPercentage == generatedString:
-					total = genTotal
-
-		if total == '':
-			print("--------------------")
-			print("There is a problem with the file " + f)
-			print("--------------------")
-			continue
-
-		if len(total) > 2:
-			i = int(len(total) / 2)
-			correct = False
-			while i < len(total):
-				tempTotal = total[0:i]
-				val = total[i:]
-				if str(float(int(val) / int(tempTotal) * 100)) == allPer[correctPercentage]:
-					correct == True
-					break
-				i+=1
-
-			if not correct:
-				print("--------------------")
-				print("There is a problem with the file " + f)
-				print("--------------------")
-				continue
-
-
-		numerical = numericalData(evaluated, categories)
-
-		data.append(["CS"+clss, int(sec), total, evaluated, 7*int(evaluated)])
-
-		sums = [numerical[k][1] for k in numerical]
-		for sms in sums:
-			for v in sms:
-				sms[sms.index(v)] = float('{:.0f}'.format(v))
-				
-		s = sums[0]
-		for i in range(1, len(sums)):
-			res = list()
-			for i1, i2 in zip(s, sums[i]):
-				#sti1 = '{:.0f}'.format(i1)
-				#sti2 = '{:.0f}'.format(i2)
-				res.append(i1+i2)
-
-				s = res
-
-		for i in s:
-			data[-1].append('{:.2f}'.format(i))
-
-		#Find a weighted average
-		average = 0
-		v = 5
-		for i in s:
-			average += v*float(i)
-			v-=1
-
-		average /= 7*int(evaluated)
-
-		data[-1].append(s[0]+s[1])
-		data[-1].append('{:.2f}'.format(average))
-
-		c+=1
-		#print("Completed ", c, "file")
-		
-
-df = pd.DataFrame(data, columns=header)
-df = df.sort_values(by=['Class', 'Section'])
-
-
-df.to_csv("/Users/dubliciousbaby/Desktop/indirect_assessment_2/results.csv")""" #save this to a csv file
 
 
