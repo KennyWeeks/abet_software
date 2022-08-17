@@ -19,154 +19,21 @@ class ParseDirect:
 
 	__totalData = dict() #this is dictionary that will hold the numerical data for each independent class
 
-	def __init__(self, gP, oN, sD, terminal):
+	__outFldr = None
+
+	def __init__(self, gP, oN, sD, terminal, outFolder):
 		self.__globalPath = gP + "/"
 		self.__count = self.__globalPath.count("/")
 		self.__outputName = oN
 		self.__saveDirectory = sD
 		self.__terminal = terminal
+		self.__outFldr = outFolder
 
 	def returnGp(self):
 		return self.__globalPath
 
 	def returnData(self):
 		return self.__totalData
-
-	def parseData(self, path):
-		#---------------
-		#Find the class name
-		cnPath = path.split("/")
-		className = cnPath[self.__count: self.__count+1]
-
-		section = cnPath[self.__count + 1: self.__count + 2]
-
-		#---------------
-		#get the document data
-		thereAreSectionNumbers = True
-
-		documentText = docx2txt.process(path)
-
-		sectionTitle = documentText.find("Sections Included in Data:")
-
-		numericalTitle = documentText.find("Numerical Data:")
-
-		sectionNumbers = documentText[sectionTitle + len("Sections Included in Data:"): numericalTitle]
-
-		if sectionNumbers.find("Enter the sections numbers of the classes that make up this report") != -1:
-			thereAreSectionNumbers = False
-		else:
-			sectionNumbers = sectionNumbers.split(",")
-
-			sectionNumbers = [sN.strip() for sN in sectionNumbers]
-
-		#---------------
-		#check if the section is found
-		if not thereAreSectionNumbers:
-			#this means the file has not been edited
-			
-			if len(self.__totalData[className[0]]["accounted"]) != 0:
-				if section[0] in self.__totalData[className[0]]["accounted"]:
-					return
-				else:
-					self.__totalData[className[0]]["missing"].append(section[0])
-					return
-			else:
-				self.__totalData[className[0]]["missing"].append(section[0])
-				return
-
-		else:
-			if len(self.__totalData[className[0]]["accounted"]) == 0:
-				#will add a check to see if missing isn't empty
-				self.__totalData[className[0]]["accounted"] = sectionNumbers
-			else:
-				i = 0
-				while i < len(sectionNumbers):
-					val = sectionNumbers[i]
-					if val in self.__totalData[className[0]]["accounted"]:
-						sectionNumbers.remove(val)
-					else:
-						i+=1
-				#tempNumbers = sectionNumbers
-				"""for i in tempNumbers:
-					print(i)
-					if i in self.__totalData[className[0]]["accounted"]:
-						print(i + "found")
-						sectionNumbers.remove(i)"""
-
-				for i in sectionNumbers:
-					self.__totalData[className[0]]["accounted"].append(i)
-
-				
-			#if there are already folders that are found empty, we can see if this file accounted for their data
-			if len(self.__totalData[className[0]]["missing"]) != 0:
-				i = 0
-				while i < len(self.__totalData[className[0]]["missing"]):
-					val = self.__totalData[className[0]]["missing"][i]
-					if val in self.__totalData[className[0]]["accounted"]:
-						self.__totalData[className[0]]["missing"].remove(val)
-					else:
-						i+=1
-
-			if len(sectionNumbers) == 0:
-				return
-
-		#---------------
-		#This will grab the individual data
-
-		eeTitle = documentText.find("Exceeds Expectations")
-		satTitle = documentText.find("Satisfactory")
-		beTitle = documentText.find("Below Expectations")
-		unsTitle = documentText.find("Unsatisfactory")
-
-		eeData = documentText[eeTitle + len("Exceeds Expectations"): satTitle]
-		satData = documentText[satTitle + len("Satisfactory"): beTitle]
-		beData = documentText[beTitle + len("Below Expectations"): unsTitle]
-		unsData = documentText[unsTitle + len("Unsatisfactory"):]
-
-		eeData = eeData.split("\n")
-		eeNData = list()
-		for data in eeData:
-			if data != '':
-				eeNData.append(float(data))
-
-
-		satData = satData.split("\n")
-		satNData = list()
-		for data in satData:
-			if data != '':
-				satNData.append(float(data))
-
-
-		beData = beData.split("\n")
-		beNData = list()
-		for data in beData:
-			if data != '':
-				beNData.append(float(data))
-
-
-		unsData = unsData.split("\n")
-		unsNData = list()
-		for data in unsData:
-			if data != '':
-				unsNData.append(float(data))
-
-		total = eeNData[0] + satNData[0] + beNData[0] + unsNData[0]
-
-		path = path.split("/")
-		className = path[self.__count: self.__count+1]
-
-
-		if len(self.__totalData[className[0]]["count"]) == 0:
-			self.__totalData[className[0]]["count"] = [int(total), int(eeNData[0]), int(satNData[0]), int(beNData[0]), int(unsNData[0])]
-		else:
-			self.__totalData[className[0]]["count"][0] += int(total)
-			self.__totalData[className[0]]["count"][1] += int(eeNData[0])
-			self.__totalData[className[0]]["count"][2] += int(satNData[0])
-			self.__totalData[className[0]]["count"][3] += int(beNData[0])
-			self.__totalData[className[0]]["count"][4] += int(unsNData[0])
-
-		#[total, eeNData[0], satNData[0], beNData[0], unsNData[0]]
-
 
 	def parseTest(self, path):
 		cnPath = path.split("/")
@@ -327,7 +194,7 @@ class ParseDirect:
 					#2 --> total numerical data
 
 				if newPath.count("/") == self.__count + 3:
-					if f == "Outcome":
+					if f == self.__outFldr:
 						self.__terminal.enterLine("Starting the parse data for " + newPath)
 						self.__terminal.idle_task()
 						self.startReading(newPath)
@@ -437,84 +304,3 @@ class ParseDirect:
 		self.__terminal.idle_task()
 
 
-"""pd = ParseDirect("/Users/dubliciousbaby/Desktop/testingParser3", "", "")
-
-gp = pd.returnGp()
-
-pd.startReading(gp)
-
-data = pd.returnData()
-
-pd.makeReport("/Users/dubliciousbaby/Desktop/", "direct.csv", data)"""
-
-
-"""documentText = docx2txt.process("/Users/dubliciousbaby/Desktop/csspring4/testing_outcome/Numerical_Direct_Assessment_Data.docx")
-
-#---------------
-#This will find the sections that are included in the report
-
-sectionTitle = documentText.find("Sections Included in Data:")
-
-numericalTitle = documentText.find("Numerical Data:")
-
-sectionNumbers = documentText[sectionTitle + len("Sections Included in Data:"): numericalTitle]
-
-sectionNumbers = sectionNumbers.split(",")
-
-sectionNumbers = [sN.strip() for sN in sectionNumbers]
-
-print(sectionNumbers)
-
-#---------------
-#This will grab the individual data
-
-eeTitle = documentText.find("Exceeds Expectations")
-satTitle = documentText.find("Satisfactory")
-beTitle = documentText.find("Below Expectations")
-unsTitle = documentText.find("Unsatisfactory")
-
-eeData = documentText[eeTitle + len("Exceeds Expectations"): satTitle]
-satData = documentText[satTitle + len("Satisfactory"): beTitle]
-beData = documentText[beTitle + len("Below Expectations"): unsTitle]
-unsData = documentText[unsTitle + len("Unsatisfactory"):]
-
-eeData = eeData.split("\n")
-eeNData = list()
-for data in eeData:
-	if data != '':
-		eeNData.append(int(data))
-
-print(eeNData)
-
-
-satData = satData.split("\n")
-satNData = list()
-for data in satData:
-	if data != '':
-		satNData.append(int(data))
-
-print(satNData)
-
-
-beData = beData.split("\n")
-beNData = list()
-for data in beData:
-	if data != '':
-		beNData.append(int(data))
-
-print(beNData)
-
-
-unsData = unsData.split("\n")
-unsNData = list()
-for data in unsData:
-	if data != '':
-		unsNData.append(int(data))
-
-print(unsNData)
-
-total = eeNData[0] + satNData[0] + beNData[0] + unsNData[0]
-
-newList = [total, eeNData[0], satNData[0], beNData[0], unsNData[0]]
-
-print(newList)"""

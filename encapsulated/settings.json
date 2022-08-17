@@ -40,15 +40,16 @@
     },
     "Subfolders": {
         "Exams": [],
-        "Testing": [
+        "Outcome": [
             "Guess"
         ],
-        "One More": [],
+        "Handouts": [],
         "Assignments": [
             "Labs", 
             "Projects",
             "Bonus",
             "Worksheets"
-        ]
+        ],
+        "Syllabus": []
     }
 }

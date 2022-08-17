@@ -131,7 +131,7 @@ class BodyFrame(ActionMethods):
 
 		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
 
-	def parseDirect(self, e):
+	def parseDirect(self, e, data):
 		startTool = True
 		args = list()
 
@@ -157,9 +157,13 @@ class BodyFrame(ActionMethods):
 		else:
 			args.append(e.get().strip())
 
+		fldrsLst = list(data["Subfolders"].keys())
+		args.append(fldrsLst[self.__auditFolders-1])
+		print(args[-1])
+
 		if startTool:
 			self.__terminal.enterLine("Starting the tool ... ")
-			pd = ParseDirect(args[0], args[2], args[1], self.__terminal)
+			pd = ParseDirect(args[0], args[2], args[1], self.__terminal, args[-1])
 			gp = pd.returnGp()
 			pd.startReading(gp)
 			data = pd.returnData()
@@ -414,6 +418,7 @@ class BodyFrame(ActionMethods):
 
 	def checkRadio(self, selected):
 		self.__auditFolders = selected;
+
 	#--------------------------------------------------
 	#--------------------------------------------------
 
@@ -1189,15 +1194,60 @@ class BodyFrame(ActionMethods):
 		selectedFolderName.grid(sticky=W, row=6, column=0, padx=7)
 
 		#---------------------------
+		#this is where the user will select with folder to search for the outcome
+
+		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFolderDesc.insert('1.0', "--> Select the directory that holds the ABET outcome data.")
+		selectFolderDesc.config(state=DISABLED)
+		selectFolderDesc.grid(sticky=W, row=7, column=0, padx=10, pady=5)
+
+		outputFolderToSearch = Frame(bodyFrame, bg="#323232", width=330, height=50)
+		outputFolderToSearch.grid(sticky=W, row=8, column=0)
+
+		data = open("encapsulated/settings.json", "r")
+		jsonData = json.load(data)
+
+		self.__auditFolders = list(jsonData["Subfolders"].keys()).index("Outcome") + 1
+
+		val = 1 #this is the radio button value
+		for keys in jsonData["Subfolders"].keys():
+			radio = Radiobutton(outputFolderToSearch, text=keys, variable=self.__auditFolders, value=val, command=lambda v=val: self.checkRadio(v))
+			if keys == "Outcome":
+				radio.select()
+				
+			radio.grid(sticky=W, row=val, column=0, padx=5, pady=5)
+			val += 1
+
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+
+		"""sylCheckBox = Radiobutton(bodyFrame, text="Audit only Syllabus ", variable=self.__auditFolders, value=2, command=lambda: self.checkRadio(2))
+		sylCheckBox.grid(sticky=W, row=8, column=0, padx=5, pady=5)
+
+		handCheckBox = Radiobutton(bodyFrame, text="Audit only Handouts", variable=self.__auditFolders, value=3, command=lambda: self.checkRadio(3))
+		handCheckBox.grid(sticky=W, row=9, column=0, padx=5, pady=5)
+
+		assCheckBox = Radiobutton(bodyFrame, text="Audit only Assignments", variable=self.__auditFolders, value=4, command=lambda: self.checkRadio(4))
+		assCheckBox.grid(sticky=W, row=10, column=0, padx=5, pady=5)
+
+		examsCheckBox = Radiobutton(bodyFrame, text="Audit only Exams", variable=self.__auditFolders, value=5, command=lambda: self.checkRadio(5))
+		examsCheckBox.grid(sticky=W, row=11, column=0, padx=5, pady=5)
+
+		outCheckBox = Radiobutton(bodyFrame, text="Audit only Outcome", variable=self.__auditFolders, value=6, command=lambda: self.checkRadio(6))
+		outCheckBox.grid(sticky=W, row=12, column=0, padx=5, pady=5)"""
+
+		#---------------------------
+
+		#---------------------------
 		#this is the entry area
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "--> Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=7, column=0, padx=10, pady=5)
+		entryDesc.grid(sticky=W, row=9, column=0, padx=10, pady=5)
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a file name here")
-		entryBox.grid(sticky=W, row=8, column=0, padx=10, pady=7)
+		entryBox.grid(sticky=W, row=10, column=0, padx=10, pady=7)
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
@@ -1209,13 +1259,13 @@ class BodyFrame(ActionMethods):
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=9, column=0, padx=10, pady=5)
+		startToolDesc.grid(sticky=W, row=11, column=0, padx=10, pady=5)
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.parseDirect(entryBox))
-		startToolButton.grid(sticky=W, row=10, column=0, padx=5)
+		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda data=jsonData: self.parseDirect(entryBox, data))
+		startToolButton.grid(sticky=W, row=12, column=0, padx=5)
 
 		divider2 = Label(bodyFrame, font=("san-serif", 3))
-		divider2.grid(sticky=W, row=11, column=0, padx=5)
+		divider2.grid(sticky=W, row=13, column=0, padx=5)
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))

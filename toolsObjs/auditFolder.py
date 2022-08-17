@@ -4,6 +4,7 @@ import re
 import smtplib
 from email.message import EmailMessage
 from dotenv import load_dotenv
+import json
 
 class auditFolder:
 
@@ -38,6 +39,8 @@ class auditFolder:
 	__output = dict() #this is the output dictionary
 
 	__listEmpty = []
+
+	__settings = []
 
 	#----
 	#these are just some output stuff, because people tend to not follow rules,
@@ -77,6 +80,14 @@ class auditFolder:
 
 		if self.__whatToAudit != "All":
 			self.__auditAll = False
+
+		fl = open("../encapsulated/settings.json", "r")
+		data = json.load(fl)
+
+		for keys in data["Subfolders"].keys():
+			self.__settings.append(keys)
+
+		print(self.__settings)
 
 	def start(self):
 		lst = os.listdir(self.__globalPath)
@@ -132,7 +143,12 @@ class auditFolder:
 				#that's final, I'm sick and tired of finding those folders
 				if fullpath.count("/") == self.__count + 2:
 					#this first conditional will just remove the unnecessary folders
-					if item != "Syllabus" and item != "Handouts" and item != "Assignments" and item != "Exams" and item != "Outcome":
+					#if item != "Syllabus" and item != "Handouts" and item != "Assignments" and item != "Exams" and item != "Outcome":
+						#the reason I use and, is because if it equals at least one of these, it's valid, but if a valid folder
+						#is found, and I had used or, it will flag this conditional
+					#	self.__addedFolders.append(newPth)
+					#	continue
+					if item not in self.__settings:
 						#the reason I use and, is because if it equals at least one of these, it's valid, but if a valid folder
 						#is found, and I had used or, it will flag this conditional
 						self.__addedFolders.append(newPth)
@@ -252,6 +268,9 @@ class auditFolder:
 			smtp.login("weeksk2@unlv.nevada.edu", PASSWORD)
 			smtp.send_message(obj)
 
+	def addedStuff(self):
+		print(self.__addedFolders)
+
 
 audit = auditFolder("/Users/dubliciousbaby/Desktop/csspring5", "", "", 0, 0, 0, "Outcome")
 
@@ -259,11 +278,13 @@ lst, tree, gp = audit.start()
 
 tree = audit.buildTree(lst, tree, gp, gp)
 
+audit.addedStuff()
+
 audit.parser(gp, tree)
 
 output = audit.returnOutput()
 
-for classNames in output.keys():
+"""for classNames in output.keys():
 	print(classNames)
 	for sections in output[classNames].keys():
 		print("\t" + sections)
@@ -272,5 +293,5 @@ for classNames in output.keys():
 			for items in output[classNames][sections][folders]:
 				print("\t\t\t" + str(items))
 
-		print("-------------------------------------")
+		print("-------------------------------------")"""
 
