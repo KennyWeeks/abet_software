@@ -1,6 +1,8 @@
 from tkinter import *
+from PIL import Image, ImageTk, ImageDraw
+from encapsulated.imageClass import TitleButtons
 
-class Menu:
+class MenuBar:
 
 	__current = 0
 	__currentLabel = None #label text of currently used tool
@@ -10,6 +12,8 @@ class Menu:
 	__labels = None #these are the individual, clickable menu labels
 	__bodyFrame = None #this is the current bodyframe displayed
 	__currentLabel = None #this is what type of tool is being used
+
+	__photo = None
 
 	#---------------------------------
 	#These are event driven methods, like when an item is click or hovered over
@@ -59,11 +63,12 @@ class Menu:
 	#---------------------------------
 	#these are class methods, used to create items on the interface
 	#---------------------------------
-	def __init__(self, root, bodyFrame, currentLabel):
+	def __init__(self, root, bodyFrame, currentLabel, photo):
 		self.__menuBar = Frame(root, bg="#444400")
 		self.__menuBar.place(x=0, y=40, width=150, height=360)
 		self.__bodyFrame = bodyFrame
 		self.__currentLabel = currentLabel
+		self.__photo = photo
 
 	def items(self, current):
 		self.__current = current #save the current tool being used
@@ -150,45 +155,6 @@ class Menu:
 		menuFrame.bind("<Button-1>", lambda event, f=menuFrame, l=label: self.changeTool(event, f, l))
 		label.bind("<Button-1>", lambda event, f=menuFrame, l=label: self.changeTool(event, f, l))
 
-		#this is the exit interview section
-		#---------------------------------------------
-		#this is the red title bar
-		"""exitSection = Frame(self.__menuBar, bg="#ff2e2e")
-		exitSection.place(x=0, y=y, width=150, height=40)
-
-		exitLabel = Label(exitSection, bg="#ff2e2e", text="EXIT INT.")
-		exitLabel.place(x=10, y=0, height=40)
-
-		y+=40
-
-		#this is the menu option panel
-		menuFrame = Frame(self.__menuBar, bg="#222222")
-		menuFrame.place(x=0, y=y, width=150, height=30)
-
-		#this is the menu label
-		label = Label(menuFrame, bg="#222222", fg="#ffffff", text="Interview Results")
-		label.place(x=10, y=0, height=25)
-
-		#save the newly created frame and label
-		self.__frames.append(menuFrame)
-		self.__labels.append(label)
-
-		#bind a hover in event for when the mouse enters the menu item
-		menuFrame.bind("<Enter>", lambda event, f=menuFrame, l=label: self.hoverIn(event, f, l))
-		label.bind("<Enter>", lambda event, f=menuFrame, l=label: self.hoverIn(event, f, l))
-
-		#I don't want to hover in event to persist once the mouse leaves
-		menuFrame.bind("<Leave>", lambda event, f=menuFrame, l=label: self.hoverOut(event, f, l))
-		label.bind("<Leave>", lambda event, f=menuFrame, l=label: self.hoverOut(event, f, l))
-
-		#this is the event bind that will change the tool being used
-		menuFrame.bind("<Button-1>", lambda event, f=menuFrame, l=label: self.changeTool(event, f, l))
-		label.bind("<Button-1>", lambda event, f=menuFrame, l=label: self.changeTool(event, f, l))
-
-		y+=30
-
-		#this is the indirect assessment section
-		#---------------------------------------------"""
 		y+=30
 		
 		indSection = Frame(self.__menuBar, bg="#ff2e2e")
@@ -234,10 +200,18 @@ class Menu:
 		settingsAndOtherToolsFrame = Frame(self.__menuBar, bg=color, width=150, height=30)
 		settingsAndOtherToolsFrame.place(x=0, y=y)
 
-		settingsLabel = Label(settingsAndOtherToolsFrame, fg=color, text="Settings", bg=color)
+		settingsLabel = Label(settingsAndOtherToolsFrame, fg="#ffffff", text="Settings", bg=color)
 		settingsLabel.place(x=10, y=0, height=25)
 
 		settingsAndOtherToolsFrame.bind("<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
+		settingsLabel.bind("<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
+
+		canvas = Canvas(settingsAndOtherToolsFrame, width=30, height=30, bg="#ff2e2e", highlightthickness=0)
+		canvas.place(x=120, y=0)
+		button = canvas.create_image((5, 5), anchor=NW, image=self.__photo)
+		canvas.tag_bind(button, "<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
+		#canvas.tag_bind(button, "<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
+		#print(photo)
 
 
 

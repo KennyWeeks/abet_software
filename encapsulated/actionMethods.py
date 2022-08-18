@@ -1,6 +1,6 @@
 import json
 from tkinter import *
-
+from toolsObjs.emailList import EmailList
 
 class ActionMethods:
 
@@ -129,3 +129,57 @@ class ActionMethods:
 		cv.update_idletasks()
 		cv.configure(scrollregion=parent.bbox("all"))
 	
+	#1) EMAIL LIST
+	#this one is specific to the "Email List" tag, this will start the tool
+	def emailList(self, filenames, checkBoxes, directory):
+		startTool = True #this will be used to determine whether to start the tool or not, it is a unique bool for each frame
+		args = [] #these are the arguments pushed to the tool
+
+		if len(filenames.keys()) == 1:
+			if filenames["0"] == "":
+				self.__terminal.enterLine("Please provide a class schedule file.")
+				startTool = False
+			else:
+				args.append(filenames["0"])
+
+				#this will append what was selected in the checkboxes
+				allZero = True
+				checkB = list()
+				for keys in checkBoxes["scheduleFileName"].keys():
+					if checkBoxes["scheduleFileName"][keys].get() != 0:
+						checkB.append(keys)
+						allZero = False
+
+				if allZero:
+					self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
+					startTool = False
+				else:
+					if len(checkB) != 3:
+						self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
+						startTool = False
+					else:
+						args.append(checkB)
+		else:
+			self.__terminal.enterLine("Please provide a class schedule file.")
+			startTool = False
+
+		if len(directory.keys()) != 0:
+			if directory["0"] == "":
+				self.__terminal.enterLine("Please provide a save directory.")
+				startTool = False
+			else:
+				args.append(directory["0"])
+		else:
+			self.__terminal.enterLine("You need to provide a save directory to start the tool.")
+			startTool = False
+
+		#start the tool if possible
+		if startTool:
+			print(args)
+			el = EmailList(args[1], args[0], args[2], self.__terminal)
+			el.createFile()
+
+
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
+
+

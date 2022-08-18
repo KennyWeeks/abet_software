@@ -51,7 +51,7 @@ class BodyFrame(ActionMethods):
 
 	#1) EMAIL LIST
 	#this one is specific to the "Email List" tag, this will start the tool
-	def combineFiles(self):
+	"""def emailList(self):
 		startTool = True #this will be used to determine whether to start the tool or not, it is a unique bool for each frame
 		args = "" #these are the arguments pushed to the tool
 
@@ -72,7 +72,7 @@ class BodyFrame(ActionMethods):
 			print(args)
 			self.__terminal.enterLine(args)
 			#args = self.__filenames["0"] + " " + self.__filenames["1"]
-			#self.__terminal.runProcess("tools/emailList.py", args)
+			#self.__terminal.runProcess("tools/emailList.py", args)"""
 
 	#2) CREATE ABET CABINET
 	#this tool will trigger the "Create ABET Cabinet" folder
@@ -429,9 +429,9 @@ class BodyFrame(ActionMethods):
 
 	#1) EMAIL LIST
 	def EmailList(self):
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 		self.__terminal.enterLine("- Progess terminal for Parsing Email List-->")
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -486,35 +486,12 @@ class BodyFrame(ActionMethods):
 		selectedFileName.grid(sticky=W, row=4, column=0, padx=7)
 
 		#this is wherre the headers of the file will be displayed
-		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
-		selectedFileHeaderDesc.insert('1.0', "--> The header columns of the selected file will be displayed. Select the ones to be used by the tool.")
+		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=5, wrap=WORD, highlightthickness=0)
+		selectedFileHeaderDesc.insert('1.0', "--> The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Professor's Name, Class Number, Class Section]")
 		selectedFileHeaderDesc.config(state=DISABLED)
 		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=10, pady=5)
 
 		scheduleFrame.grid(sticky=W, row=6, column=0, padx=10)
-		#--------------------------
-
-		#this will prompt the user to select the file that lists the faculty emails
-		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "--> Select the email file (.xlsx or .csv) that lists the professors and their emails.")
-		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=7, column=0, padx=10, pady=5)
-
-		facultyFrame = Frame(bodyFrame, width=330, name="fcFm")
-
-		selectFileButton = Button(bodyFrame, text="Select Faculty Files", command=lambda x=165, y=65: self.getFile("facultyFileName", "1", facultyFrame, bodyFrame, canvas))
-		selectFileButton.grid(sticky=W, row=8, column=0, padx=5)
-
-		selectedFileName2 = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="facultyFileName")
-		selectedFileName2.grid(sticky=W, row=9, column=0, padx=7)
-
-		selectedFileHeaderDesc2 = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
-		selectedFileHeaderDesc2.insert('1.0', "--> The header columns of the selected file will be displayed. Select the ones to be used by the tool.")
-		selectedFileHeaderDesc2.config(state=DISABLED)
-		selectedFileHeaderDesc2.grid(sticky=W, row=10, column=0, padx=10, pady=5)
-
-		facultyFrame.grid(sticky=W, row=11, column=0, padx=10)
-
 		#----------------------------
 		#this will select the destination of the associated email file
 
@@ -524,7 +501,7 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=12, column=0, padx=10, pady=5)
 
-		destinationButton = Button(bodyFrame, text="Select Save Directory")
+		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
 		destinationButton.grid(sticky=W, row=13, column=0, padx=5)
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
@@ -536,7 +513,7 @@ class BodyFrame(ActionMethods):
 		startTool.config(state=DISABLED)
 		startTool.grid(sticky=W, row=15, column=0, padx=10, pady=5)
 
-		startToolButton = Button(bodyFrame, text="Start Tool")
+		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d))
 		startToolButton.grid(sticky=W, row=16, column=0, padx=5)
 
 		divider2 = Label(bodyFrame, font=("san-serif", 3))

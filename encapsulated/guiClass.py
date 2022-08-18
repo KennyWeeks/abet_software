@@ -3,10 +3,11 @@ from tkinter import Text
 from tkinter import filedialog as fd
 from PIL import Image, ImageTk, ImageDraw
 import re
-from encapsulated.menuBar import Menu
+from encapsulated.menuBar import MenuBar
 from encapsulated.bodyFrames import BodyFrame
-"""from imageClass import TitleButtons
-from menuBar import Menu
+import sys
+from encapsulated.imageClass import TitleButtons
+"""from menuBar import Menu
 from testBox import LiveTerminal
 from bodyFrames import BodyFrame"""
 
@@ -24,34 +25,7 @@ class Application:
 	#this is the current tool being worked with
 	__current = 0
 
-	#__settings = None
-
-	#these are some of the variables that will be used
-	#this is specifically the photos for the minimize and close buttons
-	#the reason they need to be variables is because they lose their scope
-	#if they are not present as a variable in the class.
-
-	#close button
-	#__closePhoto = TitleButtons("close.png", (15, 15)).makePhoto()
-
-	#minimize button
-	#__miniPhoto = TitleButtons("mini.png", (15, 15)).makePhoto()
-
-	#--------------------------------
-	#These will be functions that are called by different objects on the application
-	"""def saveOff(self, e, x):
-					e.widget.offset = (e.x + x, e.y)
-			
-				def moveApp(self, e):
-					self.__root.geometry(f'+{e.x_root-e.widget.offset[0]}+{e.y_root-e.widget.offset[1]}')
-			
-				def close(self, e):
-					self.__root.quit()
-			
-				def mini(self, e):
-					self.__root.update_idletasks()
-					self.__root.overrideredirect(False)
-					self.__root.state("iconic")"""
+	__test = TitleButtons("imgs/gears.png", (20, 20)).makePhoto()
 
 	#--------------------------------
 	#these are the methods that will be called by the class during creation
@@ -59,8 +33,11 @@ class Application:
 		self.__root.geometry("500x400") #declare the geometry for the application
 		self.__root.title("")
 		self.__root.resizable(0, 0)
-		#photo = PhotoImage(file="imgs/logo.png")
-		#self.__root.iconphoto(False, photo)
+		photo = PhotoImage(file="imgs/logo_3.png")
+		self.__root.iconphoto(False, photo)
+
+		mn = Menu(self.__root)
+		self.__root.config(menu=mn)
 
 	def makeTitle(self):
 		#this bar will hold the settings button, as well as what tool is 
@@ -97,7 +74,7 @@ class Application:
 		self.__frame = BodyFrame(self.__root, self.__current)
 
 	def placeMenu(self):
-		menu = Menu(self.__root, self.__frame, self.__currentLabel) #initialize the block holding the menu
+		menu = MenuBar(self.__root, self.__frame, self.__currentLabel, self.__test) #initialize the block holding the menu
 
 		menu.items(self.__current) #but the menu options into that block
 

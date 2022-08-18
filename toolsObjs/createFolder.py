@@ -30,26 +30,6 @@ class CreateFolder:
 			os.mkdir(path + "/" + fldrs)
 			for sbfldrs in self.__settings["Subfolders"][fldrs]:
 				os.mkdir(path + "/" + fldrs + "/" + sbfldrs)
-		#this is the syllabus porition of the folder
-		"""os.mkdir(path + "/Syllabus")
-
-		#this is the handout poritions of the folder
-		os.mkdir(path + "/Handouts")
-
-		#this is the assignment poritions of the folder
-		os.mkdir(path + "/Assignments")
-		os.mkdir(path + "/Assignments/Labs")
-		os.mkdir(path + "/Assignments/Projects")
-		os.mkdir(path + "/Assignments/Worksheets")
-
-		#this is the exams porition of the folder
-		os.mkdir(path + "/Exams")
-		os.mkdir(path + "/Exams/Exam 1")
-		os.mkdir(path + "/Exams/Exam 2")
-		os.mkdir(path + "/Exams/Final")
-
-		#this is the outcomes porition of the folder
-		os.mkdir(path + "/Outcome")"""
 
 	def __init__(self, terminal, args):
 		self.__terminal = terminal
