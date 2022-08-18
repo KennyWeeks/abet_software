@@ -94,8 +94,6 @@ class AuditFolder:
 		for keys in data["Subfolders"].keys():
 			self.__settings.append(keys)
 
-		print(self.__settings)
-
 		self.__terminal.enterLine("Starting tool ...")
 		self.__terminal.idle_task()
 
@@ -296,9 +294,16 @@ class AuditFolder:
 				for sections in output[classNames].keys():
 					outputFile.write("\t" + sections + "\n")
 					for folders in output[classNames][sections].keys():
-						outputFile.write("\t\t" + folders + "\n")
-						for items in output[classNames][sections][folders]:
-							outputFile.write("\t\t\t" + str(items) + "\n")
+						string = "\t\t" + folders + " --> " + output[classNames][sections][folders][3] + " "
+						if self.__countEmpty == 'True' and output[classNames][sections][folders][1] != -1:
+							string += str(output[classNames][sections][folders][1]) + " of " + output[classNames][sections][folders][0] + " are full"
+
+						string += "\n"
+						outputFile.write(string)
+						if self.__showEmpty == 'True' and len(output[classNames][sections][folders][4]) != 0:
+							outputFile.write("\t\tHere are the empty subfolders:\n")
+							for items in output[classNames][sections][folders][4]:
+								outputFile.write("\t\t\t-->" + items +"\n")
 
 					outputFile.write("-------------------------------------\n")
 
@@ -327,11 +332,18 @@ class AuditFolder:
 				profsFile.write(cata + "\n")
 				profsFile.write("\t" + sec + "\n")
 				for folders in output[cata][sec].keys():
-					profsFile.write("\t\t" + folders + "\n")
-					for items in output[cata][sec][folders]:
-						profsFile.write("\t\t\t" + str(items) + "\n")
+					string = "\t\t" + folders + " --> " + output[cata][sec][folders][3] + " "
+					if self.__countEmpty == 'True' and output[classNames][sections][folders][1] != -1:
+						string += str(output[cata][sec][folders][1]) + " of " + output[cata][sec][folders][0] + " are full"
 
-				profsFile.write("-------------------------------------\n")
+					string += "\n"
+					profsFile.write(string)
+					if self.__showEmpty == 'True' and len(output[cata][sec][folders][4]) != 0:
+						profsFile.write("\t\tHere are the empty subfolders:\n")
+						for items in output[cata][sec][folders][4]:
+							profsFile.write("\t\t\t-->" + items +"\n")
+
+			profsFile.write("-------------------------------------\n")
 
 		self.__terminal.enterLine("Done")
 		self.__terminal.idle_task()

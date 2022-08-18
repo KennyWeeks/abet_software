@@ -7,11 +7,19 @@ class ActionMethods:
 
 	__terminal = None #this is this methods copy of the terminal. It's the same terminal, just a copy
 
+	__radio = 1
+
 	def setTerminal(self, terminal):
 		self.__terminal = terminal
 
 	def terminalDestroy(self):
 		self.__terminal.destroy()
+
+	def retRadio(self):
+		return self.__radio
+
+	def changeRadio(self, val):
+		self.__radio = val
 
 	#This will add data to the json file that holds the settings
 	def addToEnv(self, data, e1, e2, cv, parent, name, frame):
@@ -185,8 +193,7 @@ class ActionMethods:
 
 	#4) AUDIT FOLDER
 	#this tool will trigger the "Audit folder" tool
-	def auditFolder(self, direct, auditF, email, entry, ce, se, ea):
-		self.__terminal.enterLine("---------------------")
+	def auditFolder(self, direct, email, entry, ce, se, ea):
 		startTool = True #this is a flag to start the tool
 		args = [] #this is the arguments that are passed to the tool
 
@@ -230,17 +237,17 @@ class ActionMethods:
 			args.append("False") 
 
 		#Parse through which folder to check
-		if auditF == 1:
+		if self.__radio == 1:
 			args.append("All")
-		elif auditF == 2:
+		elif self.__radio == 2:
 			args.append("Syllabus")
-		elif auditF == 3:
+		elif self.__radio == 3:
 			args.append("Handouts")
-		elif auditF == 4:
+		elif self.__radio == 4:
 			args.append("Assignments")
-		elif auditF == 5:
+		elif self.__radio == 5:
 			args.append("Exams")
-		elif auditF == 6:
+		elif self.__radio == 6:
 			args.append("Outcome")
 
 		if len(email.keys()) == 1:
@@ -253,8 +260,11 @@ class ActionMethods:
 			self.__terminal.enterLine("Enter the email list file created earlier.")
 			startTool = False
 
+		print(args)
+
 		#This will start the tool
 		if startTool:
+
 			audit = AuditFolder(args[0], args[1], args[2], args[3], args[4], args[5], args[6], self.__terminal, args[7])
 			lst, tree, gp = audit.start()
 			self.__terminal.enterLine("Starting to build tree ...")

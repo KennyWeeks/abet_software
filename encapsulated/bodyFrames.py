@@ -367,6 +367,7 @@ class BodyFrame(ActionMethods):
 			entryBox.config(fg="#000000")
 
 	def getFolderForGrid(self, bf, name, i):
+		print(self.__auditFolders)
 		directory = fd.askdirectory()
 		if len(directory) == 0:
 			for c in bf.winfo_children():
@@ -418,6 +419,7 @@ class BodyFrame(ActionMethods):
 
 	def checkRadio(self, selected):
 		self.__auditFolders = selected;
+		print(self.__auditFolders)
 
 	#--------------------------------------------------
 	#--------------------------------------------------
@@ -1046,23 +1048,24 @@ class BodyFrame(ActionMethods):
 
 		#---------------
 		#Subfolder check
-		allCheckBox = Radiobutton(bodyFrame, text="Audit all subfolders", variable=self.__auditFolders, value=1, command=lambda :self.checkRadio(1))
+
+		allCheckBox = Radiobutton(bodyFrame, text="Audit all subfolders", variable=self.retRadio(), value=1, command=lambda: self.changeRadio(1))
 		allCheckBox.select()
 		allCheckBox.grid(sticky=W, row=7, column=0, padx=5, pady=5)
 
-		sylCheckBox = Radiobutton(bodyFrame, text="Audit only Syllabus ", variable=self.__auditFolders, value=2, command=lambda: self.checkRadio(2))
+		sylCheckBox = Radiobutton(bodyFrame, text="Audit only Syllabus ", variable=self.retRadio(), value=2, command=lambda: self.changeRadio(2))
 		sylCheckBox.grid(sticky=W, row=8, column=0, padx=5, pady=5)
 
-		handCheckBox = Radiobutton(bodyFrame, text="Audit only Handouts", variable=self.__auditFolders, value=3, command=lambda: self.checkRadio(3))
+		handCheckBox = Radiobutton(bodyFrame, text="Audit only Handouts", variable=self.retRadio(), value=3, command=lambda: self.changeRadio(3))
 		handCheckBox.grid(sticky=W, row=9, column=0, padx=5, pady=5)
 
-		assCheckBox = Radiobutton(bodyFrame, text="Audit only Assignments", variable=self.__auditFolders, value=4, command=lambda: self.checkRadio(4))
+		assCheckBox = Radiobutton(bodyFrame, text="Audit only Assignments", variable=self.retRadio(), value=4, command=lambda: self.changeRadio(4))
 		assCheckBox.grid(sticky=W, row=10, column=0, padx=5, pady=5)
 
-		examsCheckBox = Radiobutton(bodyFrame, text="Audit only Exams", variable=self.__auditFolders, value=5, command=lambda: self.checkRadio(5))
+		examsCheckBox = Radiobutton(bodyFrame, text="Audit only Exams", variable=self.retRadio(), value=5, command=lambda: self.changeRadio(5))
 		examsCheckBox.grid(sticky=W, row=11, column=0, padx=5, pady=5)
 
-		outCheckBox = Radiobutton(bodyFrame, text="Audit only Outcome", variable=self.__auditFolders, value=6, command=lambda: self.checkRadio(6))
+		outCheckBox = Radiobutton(bodyFrame, text="Audit only Outcome", variable=self.retRadio(), value=6, command=lambda: self.changeRadio(6))
 		outCheckBox.grid(sticky=W, row=12, column=0, padx=5, pady=5)
 
 		divider = Label(bodyFrame, text="------------------------------------", bg="#323232", fg="#ffffff", wraplength=300, justify=LEFT)
@@ -1120,7 +1123,7 @@ class BodyFrame(ActionMethods):
 		startAudit = Label(bodyFrame, text="--> Start the audit", bg="#323232", fg="#ffffff")
 		startAudit.grid(sticky=W, row=28, column=0, padx=5, pady=5)
 
-		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, ch=self.__auditFolders, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, ch, em, e, ce, se, ea))
+		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, em, e, ce, se, ea))
 		strAuditB.grid(sticky=W, row=29, column=0, padx=5)
 
 		lbl = Label(bodyFrame)
