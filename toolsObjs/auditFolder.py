@@ -5,8 +5,9 @@ import smtplib
 from email.message import EmailMessage
 from dotenv import load_dotenv
 import json
+import csv
 
-class auditFolder:
+class AuditFolder:
 
 	#---------------------
 	#These are the variables that will be used by the class to 
@@ -42,6 +43,10 @@ class auditFolder:
 
 	__settings = []
 
+	__terminal = None
+
+	__email = None
+
 	#----
 	#these are just some output stuff, because people tend to not follow rules,
 	#so some of these will hold the actual audit folders, and other will hold folders
@@ -60,7 +65,7 @@ class auditFolder:
 
 	#---------------------
 
-	def __init__(self, gPath, sPath, name, cE, sE, eA, wA):
+	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, em):
 		#gPath --> global path
 		#sPath --> save path
 		#name --> output name
@@ -77,11 +82,13 @@ class auditFolder:
 		self.__showEmpty = sE
 		self.__emailAudit = eA
 		self.__whatToAudit = wA
+		self.__terminal = terminal
+		self.__email = em
 
 		if self.__whatToAudit != "All":
 			self.__auditAll = False
 
-		fl = open("../encapsulated/settings.json", "r")
+		fl = open("encapsulated/settings.json", "r")
 		data = json.load(fl)
 
 		for keys in data["Subfolders"].keys():
@@ -89,7 +96,12 @@ class auditFolder:
 
 		print(self.__settings)
 
+		self.__terminal.enterLine("Starting tool ...")
+		self.__terminal.idle_task()
+
 	def start(self):
+		self.__terminal.enterLine("Opening the ABET folder now...")
+		self.__terminal.idle_task()
 		lst = os.listdir(self.__globalPath)
 		tree = {self.__globalPath: [list(), list(), self.__globalPath, ""]}
 		return lst, tree, self.__globalPath
@@ -101,6 +113,8 @@ class auditFolder:
 		return self.__output
 
 	def buildTree(self, fldrs, tree, fullpath, prevFlder):
+		self.__terminal.enterLine("Adding this path: " + fullpath + " to the tree ...")
+		self.__terminal.idle_task()
 		for item in fldrs:
 
 			#this is the path with the new stuff added to it
@@ -210,6 +224,8 @@ class auditFolder:
 
 
 		if path.count("/") == self.__count + 3:
+			self.__terminal.enterLine("Finalizing data for: " + path)
+			self.__terminal.idle_task()
 			pth = re.compile("/")
 			listBackSlash = [m.start() for m in pth.finditer(path)]
 
@@ -271,8 +287,57 @@ class auditFolder:
 	def addedStuff(self):
 		print(self.__addedFolders)
 
+	def writingOutput(self, output):
+		self.__terminal.enterLine("Writing the final data file...")
+		self.__terminal.idle_task()
+		with open(self.__savePath + "/" + self.__outputName + ".txt", "w") as outputFile:
+			for classNames in output.keys():
+				outputFile.write(classNames + "\n")
+				for sections in output[classNames].keys():
+					outputFile.write("\t" + sections + "\n")
+					for folders in output[classNames][sections].keys():
+						outputFile.write("\t\t" + folders + "\n")
+						for items in output[classNames][sections][folders]:
+							outputFile.write("\t\t\t" + str(items) + "\n")
 
-audit = auditFolder("/Users/dubliciousbaby/Desktop/csspring5", "", "", 0, 0, 0, "Outcome")
+					outputFile.write("-------------------------------------\n")
+
+		self.__terminal.enterLine("Organizing classes based on professors ...")
+		self.__terminal.idle_task()
+
+		profs = list()
+
+		with open(self.__email, newline='') as csvfile:
+			spamreader = csv.reader(csvfile, delimiter=',')
+			next(spamreader)
+			for row in spamreader:
+				profs.append([])
+				profs[-1].append(row[0])
+				profs[-1].append(row[-1].strip("][").split(", "))
+
+		profsFile = open(self.__savePath + "/" + self.__outputName + "_profs.txt", "w")
+
+		for pros in profs:
+			profsFile.write(pros[0] +"\n")
+			for clss in pros[1]:
+				clssOps = clss.strip('\'').split("/")
+				cata = "cs" + clssOps[0][2:]
+				sec = clssOps[1]
+
+				profsFile.write(cata + "\n")
+				profsFile.write("\t" + sec + "\n")
+				for folders in output[cata][sec].keys():
+					profsFile.write("\t\t" + folders + "\n")
+					for items in output[cata][sec][folders]:
+						profsFile.write("\t\t\t" + str(items) + "\n")
+
+				profsFile.write("-------------------------------------\n")
+
+		self.__terminal.enterLine("Done")
+		self.__terminal.idle_task()
+
+
+"""audit = auditFolder("/Users/dubliciousbaby/Desktop/csspring5", "", "", 0, 0, 0, "Outcome")
 
 lst, tree, gp = audit.start()
 
@@ -284,7 +349,7 @@ audit.parser(gp, tree)
 
 output = audit.returnOutput()
 
-"""for classNames in output.keys():
+for classNames in output.keys():
 	print(classNames)
 	for sections in output[classNames].keys():
 		print("\t" + sections)

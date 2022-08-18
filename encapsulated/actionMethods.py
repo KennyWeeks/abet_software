@@ -1,6 +1,7 @@
 import json
 from tkinter import *
 from toolsObjs.emailList import EmailList
+from toolsObjs.auditFolder import AuditFolder
 
 class ActionMethods:
 
@@ -182,4 +183,92 @@ class ActionMethods:
 
 		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 
+	#4) AUDIT FOLDER
+	#this tool will trigger the "Audit folder" tool
+	def auditFolder(self, direct, auditF, email, entry, ce, se, ea):
+		self.__terminal.enterLine("---------------------")
+		startTool = True #this is a flag to start the tool
+		args = [] #this is the arguments that are passed to the tool
+
+		#this will check to see if the two directories have been chosen
+		if len(direct.keys()) == 2:
+			if direct["0"] == "":
+				self.__terminal.enterLine("Missing the path to the directory with the assessment.")
+				startTool = False
+			else:
+				args.append(direct["0"])
+
+			if direct["1"] == "":
+				self.__terminal.enterLine("Missing the path to the directory for the final saved audit.")
+				startTool = False
+			else:
+				args.append(direct["1"])
+		else:
+			self.__terminal.enterLine("Please include both directories for this tool to work")
+
+		#This will get the text written in the entry block
+		if entry.get().strip() == "Enter a folder name here" or entry.get().strip() == "":
+			self.__terminal.enterLine("Please enter the name of the final save file.")
+			startTool = False
+		else:
+			args.append(entry.get().strip())
+
+		#parse through which check marks have been made
+		if ce.get() == 1:
+			args.append("True")
+		else:
+			args.append("False")
+
+		if se.get() == 1:
+			args.append("True")
+		else:
+			args.append("False")
+
+		if ea.get() == 1:
+			args.append("True")
+		else:
+			args.append("False") 
+
+		#Parse through which folder to check
+		if auditF == 1:
+			args.append("All")
+		elif auditF == 2:
+			args.append("Syllabus")
+		elif auditF == 3:
+			args.append("Handouts")
+		elif auditF == 4:
+			args.append("Assignments")
+		elif auditF == 5:
+			args.append("Exams")
+		elif auditF == 6:
+			args.append("Outcome")
+
+		if len(email.keys()) == 1:
+			if email["0"] == "":
+				self.__terminal.enterLine("Enter the email list file created earlier.")
+				startTool = False
+			else:
+				args.append(email["0"])
+		else:
+			self.__terminal.enterLine("Enter the email list file created earlier.")
+			startTool = False
+
+		#This will start the tool
+		if startTool:
+			audit = AuditFolder(args[0], args[1], args[2], args[3], args[4], args[5], args[6], self.__terminal, args[7])
+			lst, tree, gp = audit.start()
+			self.__terminal.enterLine("Starting to build tree ...")
+			self.__terminal.idle_task()
+			tree = audit.buildTree(lst, tree, gp, gp)
+			#audit.addedStuff()
+			self.__terminal.enterLine("Starting to parse the tree ...")
+			self.__terminal.idle_task()
+			audit.parser(gp, tree)
+			output = audit.returnOutput()
+			audit.writingOutput(output)
+			#self.__terminal.runProcess("tools/audit.py", args)
+		else:
+			print("Nope, there are issues")
+
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 

@@ -931,7 +931,7 @@ class BodyFrame(ActionMethods):
 
 	#4) AUDIT FOLDER
 	#this tool will trigger the "Audit folder" tool
-	def auditFolder(self, e, ce, se, ea):
+	"""def auditFolder(self, e, ce, se, ea):
 		self.__terminal.enterLine("---------------------")
 		startTool = True #this is a flag to start the tool
 		args = "" #this is the arguments that are passed to the tool
@@ -991,12 +991,12 @@ class BodyFrame(ActionMethods):
 			self.__terminal.runProcess("tools/audit.py", args)
 		else:
 			print("Nope, there are issues")
-
+	"""
 	#4) AUDIT FOLDER
 	def AuditCabinet(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 		self.__terminal.enterLine("- Progess terminal for the Audit -->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 
 		canvas = Canvas(self.__styleFrame, highlightthickness=0)
 		canvas.pack(side=LEFT, fill=BOTH, expand=1)
@@ -1098,11 +1098,6 @@ class BodyFrame(ActionMethods):
 		selectSaveDir = Label(bodyFrame, text="--> Select the directory to save the audit", bg="#323232", fg="#ffffff")
 		selectSaveDir.grid(sticky=W, row=21, column=0, padx=5, pady=5)
 
-		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the directory to save the audit.")
-		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.grid(sticky=W, row=22, column=0, padx=10, pady=5)
-
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFolderButton = Button(bodyFrame, text="Select Save Directory", command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "saveDir", "1"))
 		selectFolderButton.grid(sticky=W, row=23, column=0, padx=5)
@@ -1110,14 +1105,26 @@ class BodyFrame(ActionMethods):
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="saveDir")
 		selectedFolderName.grid(sticky=W, row=24, column=0, padx=7)
 
-		startAudit = Label(bodyFrame, text="--> Start the audit", bg="#323232", fg="#ffffff")
-		startAudit.grid(sticky=W, row=25, column=0, padx=5, pady=5)
+		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFileDesc.insert('1.0', "--> Select the file that holds the indirect assessment data.")
+		selectFileDesc.config(state=DISABLED)
+		selectFileDesc.grid(sticky=W, row=25, column=0, padx=10, pady=5)
 
-		strAuditB = Button(bodyFrame, text="Start Audit", command=lambda e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(e, ce, se, ea))
-		strAuditB.grid(sticky=W, row=26, column=0, padx=5)
+		#this will prompt the user to select a file to use for this part of the tool
+		selectFileButton = Button(bodyFrame, text="Select Email List", command=lambda x=165, y=65: self.getFile("emlist", "0", None, bodyFrame, canvas))
+		selectFileButton.grid(sticky=W, row=26, column=0, padx=5)
+
+		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="emlist")
+		selectedFileName.grid(sticky=W, row=27, column=0, padx=7)
+
+		startAudit = Label(bodyFrame, text="--> Start the audit", bg="#323232", fg="#ffffff")
+		startAudit.grid(sticky=W, row=28, column=0, padx=5, pady=5)
+
+		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, ch=self.__auditFolders, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, ch, em, e, ce, se, ea))
+		strAuditB.grid(sticky=W, row=29, column=0, padx=5)
 
 		lbl = Label(bodyFrame)
-		lbl.grid(sticky=W, row=27, column=0, pady=5)
+		lbl.grid(sticky=W, row=30, column=0, pady=5)
 
 	def ParseDirect(self):
 		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++")
