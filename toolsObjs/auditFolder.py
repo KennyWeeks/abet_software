@@ -261,12 +261,12 @@ class AuditFolder:
 			self.__listEmpty = []
 
 	def emailData(self, output):
-		load_dotenv()
+		"""load_dotenv()
 		password = os.getenv("TESTPASS")
 
 		for emails in output.keys():
 			smtpObj = self.setUpSMTP(emails)
-			self.sendMail(smtpObj, output[emails])
+			self.sendMail(smtpObj, output[emails])"""
 
 	def setUpSMTP(contacts):
 		msg = EmailMessage()
@@ -345,30 +345,10 @@ class AuditFolder:
 
 			profsFile.write("-------------------------------------\n")
 
+		if self.__emailAudit == 'True':
+			self.__terminal.enterLine("The email option is currently off line.")
+
 		self.__terminal.enterLine("Done")
 		self.__terminal.idle_task()
 
-
-"""audit = auditFolder("/Users/dubliciousbaby/Desktop/csspring5", "", "", 0, 0, 0, "Outcome")
-
-lst, tree, gp = audit.start()
-
-tree = audit.buildTree(lst, tree, gp, gp)
-
-audit.addedStuff()
-
-audit.parser(gp, tree)
-
-output = audit.returnOutput()
-
-for classNames in output.keys():
-	print(classNames)
-	for sections in output[classNames].keys():
-		print("\t" + sections)
-		for folders in output[classNames][sections].keys():
-			print("\t\t" + folders)
-			for items in output[classNames][sections][folders]:
-				print("\t\t\t" + str(items))
-
-		print("-------------------------------------")"""
 
