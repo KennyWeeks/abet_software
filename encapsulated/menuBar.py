@@ -206,10 +206,10 @@ class MenuBar:
 		settingsAndOtherToolsFrame.bind("<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
 		settingsLabel.bind("<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
 
-		canvas = Canvas(settingsAndOtherToolsFrame, width=30, height=30, bg="#ff2e2e", highlightthickness=0)
-		canvas.place(x=120, y=0)
-		button = canvas.create_image((5, 5), anchor=NW, image=self.__photo)
-		canvas.tag_bind(button, "<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
+		#canvas = Canvas(settingsAndOtherToolsFrame, width=30, height=30, bg="#ff2e2e", highlightthickness=0)
+		#canvas.place(x=120, y=0)
+		#button = canvas.create_image((5, 5), anchor=NW, image=self.__photo)
+		#canvas.tag_bind(button, "<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
 		#canvas.tag_bind(button, "<Button-1>", lambda event, f=settingsAndOtherToolsFrame, l=settingsLabel: self.changeTool(event, f, l))
 		#print(photo)
 

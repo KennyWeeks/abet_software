@@ -140,7 +140,7 @@ class ActionMethods:
 	
 	#1) EMAIL LIST
 	#this one is specific to the "Email List" tag, this will start the tool
-	def emailList(self, filenames, checkBoxes, directory):
+	def emailList(self, filenames, checkBoxes, directory, settingsP):
 		startTool = True #this will be used to determine whether to start the tool or not, it is a unique bool for each frame
 		args = [] #these are the arguments pushed to the tool
 
@@ -185,7 +185,7 @@ class ActionMethods:
 		#start the tool if possible
 		if startTool:
 			print(args)
-			el = EmailList(args[1], args[0], args[2], self.__terminal)
+			el = EmailList(args[1], args[0], args[2], self.__terminal, settingsP)
 			el.createFile()
 
 
@@ -193,7 +193,7 @@ class ActionMethods:
 
 	#4) AUDIT FOLDER
 	#this tool will trigger the "Audit folder" tool
-	def auditFolder(self, direct, email, entry, ce, se, ea):
+	def auditFolder(self, direct, email, entry, ce, se, ea, settingsP):
 		startTool = True #this is a flag to start the tool
 		args = [] #this is the arguments that are passed to the tool
 
@@ -265,7 +265,7 @@ class ActionMethods:
 		#This will start the tool
 		if startTool:
 
-			audit = AuditFolder(args[0], args[1], args[2], args[3], args[4], args[5], args[6], self.__terminal, args[7])
+			audit = AuditFolder(args[0], args[1], args[2], args[3], args[4], args[5], args[6], self.__terminal, args[7], settingsP)
 			lst, tree, gp = audit.start()
 			self.__terminal.enterLine("Starting to build tree ...")
 			self.__terminal.idle_task()

@@ -31,12 +31,12 @@ class ParseIndirect:
 
 	__outcomeClassesList = [[], [], [], [], [], []]
 
-	def __init__(self, resultFile, saveDestination, terminal):
+	def __init__(self, resultFile, saveDestination, terminal, settingsP):
 		self.__numericalDataLocation = resultFile
 		self.__saveDestination = saveDestination
 		self.__terminal = terminal
 
-		fl = open("encapsulated/settings.json", "r")
+		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
 		print(data)
 

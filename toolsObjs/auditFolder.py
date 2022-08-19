@@ -65,7 +65,7 @@ class AuditFolder:
 
 	#---------------------
 
-	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, em):
+	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, em, settingsP):
 		#gPath --> global path
 		#sPath --> save path
 		#name --> output name
@@ -88,7 +88,7 @@ class AuditFolder:
 		if self.__whatToAudit != "All":
 			self.__auditAll = False
 
-		fl = open("encapsulated/settings.json", "r")
+		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
 
 		for keys in data["Subfolders"].keys():

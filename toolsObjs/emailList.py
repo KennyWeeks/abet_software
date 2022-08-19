@@ -19,9 +19,9 @@ class EmailList:
 
 	__terminal = None
 
-	def __init__(self, col, sp, op, tm):
+	def __init__(self, col, sp, op, tm, settingsP):
 
-		fl = open("encapsulated/settings.json", "r")
+		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
 
 		for keys in data["Classes"].keys():

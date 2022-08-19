@@ -25,7 +25,7 @@ class Application:
 	#this is the current tool being worked with
 	__current = 0
 
-	__test = TitleButtons("imgs/gears.png", (20, 20)).makePhoto()
+	#__test = TitleButtons("imgs/gears.png", (20, 20)).makePhoto()
 
 	#--------------------------------
 	#these are the methods that will be called by the class during creation
@@ -33,8 +33,8 @@ class Application:
 		self.__root.geometry("500x400") #declare the geometry for the application
 		self.__root.title("")
 		self.__root.resizable(0, 0)
-		photo = PhotoImage(file="imgs/logo_3.png")
-		self.__root.iconphoto(False, photo)
+		#photo = PhotoImage(file="imgs/logo_3.png")
+		#self.__root.iconphoto(False, photo)
 
 		mn = Menu(self.__root)
 		self.__root.config(menu=mn)
@@ -74,7 +74,7 @@ class Application:
 		self.__frame = BodyFrame(self.__root, self.__current)
 
 	def placeMenu(self):
-		menu = MenuBar(self.__root, self.__frame, self.__currentLabel, self.__test) #initialize the block holding the menu
+		menu = MenuBar(self.__root, self.__frame, self.__currentLabel, None) #initialize the block holding the menu
 
 		menu.items(self.__current) #but the menu options into that block
 

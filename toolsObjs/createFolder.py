@@ -24,14 +24,12 @@ class CreateFolder:
 	__settings = None
 
 	def addCabinetStructure(self, path):
-		print(path)
 		for fldrs in self.__settings["Subfolders"].keys():
-			print(fldrs)
 			os.mkdir(path + "/" + fldrs)
 			for sbfldrs in self.__settings["Subfolders"][fldrs]:
 				os.mkdir(path + "/" + fldrs + "/" + sbfldrs)
 
-	def __init__(self, terminal, args):
+	def __init__(self, terminal, args, settingsP):
 		self.__terminal = terminal
 
 		self.__terminal.enterLine("Starting the tool ....")
@@ -46,9 +44,8 @@ class CreateFolder:
 		self.__saveDest = args[3]
 
 		#open up the settings, and get the info needed to get this thing running
-		fl = open("encapsulated/settings.json", "r")
+		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
-		print(data)
 
 		for keys in data["Classes"].keys():
 			print(keys)
