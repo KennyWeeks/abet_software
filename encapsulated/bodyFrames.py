@@ -372,7 +372,7 @@ class BodyFrame(ActionMethods):
 	def entryClick(self, event, entryBox):
 		#okay, this is kinda stupid, but that's because tkinter is pretty limited,
 		#there is a default text that I want to get rid of when the user clicks on the entry box
-		if entryBox.get().strip() == "Enter a folder name here" or entryBox.get().strip() == "Enter a file name here":
+		if entryBox.get().strip() == "Enter a folder name here" or entryBox.get().strip() == "Enter a file name here" or entryBox.get().strip() == "Class Name" or entryBox.get().strip() == "Outcomes" or entryBox.get().strip() == "Subfolder":
 			entryBox.delete(0, len(entryBox.get()))
 			entryBox.config(fg="#000000")
 
@@ -1269,50 +1269,32 @@ class BodyFrame(ActionMethods):
 		file = open(os.path.join(path, "settings.json"), "r")
 		settingsValues = json.load(file)
 
-		#this canvas will hold the scrollbar, as well as the frame that will grow with the scrollbar
-		canvas = Canvas(self.__styleFrame, highlightthickness=0)
-		canvas.pack(side=LEFT, fill=BOTH, expand=1)
-
-		#this is the scrollbar associated with the canvas
-		scrollBar = ttk.Scrollbar(self.__styleFrame, orient=VERTICAL, command=canvas.yview)
-		scrollBar.pack(side=RIGHT, fill=Y)
-
-		#scrollBarH = Scrollbar(canvas, orient="horizontal", command=canvas.xview)
-		#scrollBarH.pack(side=BOTTOM, fill=X)
-
-		#this sets the scrollbar to work with the canvas
-		canvas.configure(yscrollcommand=scrollBar.set)
-		#canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
-		canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
-		#this is the bodyframe that will hold content of the application
-		bodyFrame = Frame(canvas)
-
-		#this is like creating a window inside the canvas, that will grow, almost drawing the 
-		#tool as it expands
-		canvas.create_window((0, 0), window=bodyFrame, anchor="nw")
+		"""------------------------
+		This section is kinda a hack, it will allow the user to scroll through the application
+		because tkinter doesn't have a dedicated scrolling options, and I would like to keep the 
+		design as compact as possible
+		------------------------"""
+		#create the scrollframe
+		bodyFrame, canvas = self.createScrollFrame()
 
 		"""------------------------
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
 		------------------------"""
-
-		#this will introduce what is going on with this section
-		divider = Label(bodyFrame, font=("san-serif", 3))
-		divider.grid(sticky=W, row=0, column=0, padx=5)
-
 		#this is the intro text block telling the user what they can do with this section
 		introLabel = Text(bodyFrame, bg="#323232", width=40, height=4, wrap=WORD, highlightthickness=0)
 		introLabel.insert('1.0', "--> This section will allow you to define what classes, subfolders, and outcomes the tool will generate and use to parse the data correctly.")
 		introLabel.config(state=DISABLED)
-		introLabel.grid(sticky=W, row=1, column=0, padx=10, pady=5)
+		introLabel.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
 		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "----------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=2, column=0, padx=10)
 
+		"""------------------------
+		This will allow the users the ability to change the classes and their outcomes
+		------------------------"""
 		#this is a frame that will hold the class names, their outcomes, and an operation button
 		classFrame = Frame(bodyFrame, bg="#323232", width=330, height=50)
 		classFrame.grid(sticky=W, row=3, column=0)
@@ -1321,13 +1303,13 @@ class BodyFrame(ActionMethods):
 		#These are the columns for this section, add to the classFrame, NOT bodyFrame
 		#--------
 		classLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="Class Name")
-		classLabel.grid(sticky=W, row=1, column=1, padx=10, pady=5)
+		classLabel.grid(sticky=W, row=1, column=1, padx=(10, 3), pady=5)
 
 		outcomeLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="Class Outcomes")
-		outcomeLabel.grid(sticky=W, row=1, column=2, padx=10, pady=5)
+		outcomeLabel.grid(sticky=W, row=1, column=2, padx=(0, 3), pady=5)
 
 		opLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="Operation")
-		opLabel.grid(sticky=W, row=1, column=3, pady=5)
+		opLabel.grid(sticky=W, row=1, column=3, pady=5, padx=(3, 0))
 
 		#Adding Labels here
 
@@ -1336,7 +1318,7 @@ class BodyFrame(ActionMethods):
 
 			#this is dynamic based on the values in the settings.json file
 			classesLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="+ " + keys + " -->", name="label"+keys)
-			classesLabel.grid(sticky=W, row=row, column=1, padx=10, pady=5)
+			classesLabel.grid(sticky=W, row=row, column=1, padx=(10, 3), pady=5)
 
 			#this will format the different outcomes needed
 			if len(settingsValues["Classes"][keys]) > 1:
@@ -1353,32 +1335,25 @@ class BodyFrame(ActionMethods):
 
 			#create the label that holds the outcomes
 			classesOutcome = Label(classFrame, bg="#323232", fg="#ffffff", text=outcomes, name="out"+keys)
-			classesOutcome.grid(sticky=W, row=row, column=2, padx=10, pady=5)
+			classesOutcome.grid(sticky=W, row=row, column=2, padx=(0,3), pady=5)
 
 			#create the button that will complete the different operations
 			deleteButton = Button(classFrame, text="del", name="but"+keys, command=lambda name=keys: self.removeFromEnv( name, classFrame, canvas, bodyFrame, "Classes"))
-			deleteButton.grid(sticky=W, row=row, column=3, pady=5)
+			deleteButton.grid(sticky=W, row=row, column=3, pady=5, padx=(3, 0))
 
 			row+=1
-
-		#update the canvas
-		canvas.update_idletasks()
-		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 		#------
 		#these are dividing labels that will separate the addition section from the rest of the rows
 		dividingLabel = Label(classFrame, text="----------", bg="#323232", fg="#ffffff")
-		dividingLabel.grid(sticky=W, row=row, column=1, padx=10)
+		dividingLabel.grid(sticky=W, row=row, column=1, padx=(10, 3))
 
 		dividingLabel = Label(classFrame, text="--------------", bg="#323232", fg="#ffffff")
-		dividingLabel.grid(sticky=W, row=row, column=2, padx=10)
+		dividingLabel.grid(sticky=W, row=row, column=2, padx=(0, 3))
 
 		dividingLabel = Label(classFrame, text="---------", bg="#323232", fg="#ffffff")
-		dividingLabel.grid(sticky=W, row=row, column=3)
+		dividingLabel.grid(sticky=W, row=row, column=3, padx=(3, 0))
 		#------
-
-		canvas.update_idletasks()
-		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 		row += 1
 
@@ -1386,20 +1361,23 @@ class BodyFrame(ActionMethods):
 		#this is the addition section of the classframe, it will allow the user to add info to the settings.json file, as well as the actual page
 		entryBoxClass = Entry(classFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
 		entryBoxClass.insert(0, "Class Name")
-		entryBoxClass.grid(sticky=W, row=row, column=1, padx=10, pady=5)
+		entryBoxClass.grid(sticky=W, row=row, column=1, padx=(10, 3), pady=5)
 		entryBoxClass.config(insertbackground="#000000")
 
+		entryBoxClass.bind("<Button-1>", lambda event, e=entryBoxClass: self.entryClick(event, e))
+
 		entryBoxOutcome = Entry(classFrame, bg="#ffffff", fg="#bebebe", width=11, highlightthickness=0, relief=FLAT)
-		entryBoxOutcome.insert(0, "Class Outcomes")
-		entryBoxOutcome.grid(sticky=W, row=row, column=2, padx=10, pady=5)
+		entryBoxOutcome.insert(0, "Outcomes")
+		entryBoxOutcome.grid(sticky=W, row=row, column=2, padx=(7, 4), pady=5)
 		entryBoxOutcome.config(insertbackground="#000000")
 
-		addButton = Button(classFrame, text="add", command=lambda: self.addToEnv(settingsValues, entryBoxClass, entryBoxOutcome, cv, bodyFrame))
-		addButton.grid(sticky=W, row=row, column=3, pady=5)
-		#------
+		entryBoxOutcome.bind("<Button-1>", lambda event, e=entryBoxOutcome: self.entryClick(event, e))
 
-		canvas.update_idletasks()
-		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+		path = self.get_file_path()
+
+		addButton = Button(classFrame, text="add", command=lambda: self.addToEnv(path, entryBoxClass, entryBoxOutcome, canvas, bodyFrame))
+		addButton.grid(sticky=W, row=row, column=3, pady=0, padx=(3, 0))
+		#------
 
 		#this is another dividing frame that will separate the different operations in this page
 		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
@@ -1423,10 +1401,10 @@ class BodyFrame(ActionMethods):
 		#--------
 		#these are the columns in this frame, added to the subfolderFrame, NOT the bodyframe
 		mainFolderLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Main Folder")
-		mainFolderLabel.grid(sticky=W, row=1, column=1, padx=2, pady=5)
+		mainFolderLabel.grid(sticky=W, row=1, column=1, padx=(2, 0), pady=5)
 
 		subfolderLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Subfolders")
-		subfolderLabel.grid(sticky=W, row=1, column=2, padx=0, pady=5)
+		subfolderLabel.grid(sticky=W, row=1, column=2, padx=(2, 2), pady=5)
 
 		opLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Operation")
 		opLabel.grid(sticky=W, row=1, column=3, pady=5, padx=0)
@@ -1439,10 +1417,10 @@ class BodyFrame(ActionMethods):
 		row = 2
 		for keys in settingsValues["Subfolders"].keys():
 			mnLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="+ " + keys + " --> ", name="label" + keys)
-			mnLabel.grid(sticky=W, row=row, column=1, padx=2, pady=5)
+			mnLabel.grid(sticky=W, row=row, column=1, padx=(2, 0), pady=5)
 
 			opButton = Button(subfolderFrame, text="del", name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"))
-			opButton.grid(sticky=W, row=row, column=3, pady=0, padx=5)
+			opButton.grid(sticky=W, row=row, column=3, pady=0, padx=0)
 
 			if len(settingsValues["Subfolders"][keys]) != 0:
 				for sfFolder in settingsValues["Subfolders"][keys]:
@@ -1477,10 +1455,14 @@ class BodyFrame(ActionMethods):
 		entryBoxMain.grid(sticky=W, row=row, column=1, padx=10, pady=5)
 		entryBoxMain.config(insertbackground="#000000")
 
+		entryBoxMain.bind("<Button-1>", lambda event, e=entryBoxMain: self.entryClick(event, e))
+
 		entryBoxSub = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT, name="addButtonSubEntry2")
 		entryBoxSub.insert(0, "Subfolder")
 		entryBoxSub.grid(sticky=W, row=row, column=2, padx=0, pady=5)
 		entryBoxSub.config(insertbackground="#000000")
+
+		entryBoxSub.bind("<Button-1>", lambda event, e=entryBoxSub: self.entryClick(event, e))
 
 		addButton = Button(subfolderFrame, text="add", name="addButtonSub", command=lambda: self.addToEnv(settingsValues, entryBoxFolder, None, canvas, bodyFrame, "addButtonSub", subfolderFrame))
 		addButton.grid(sticky=W, row=row, column=3, pady=5, padx=10)
