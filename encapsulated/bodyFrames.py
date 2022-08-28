@@ -59,31 +59,6 @@ class BodyFrame(ActionMethods):
 	#--------------------------------------------------
 	#These methods below are attached to specific tags, and will trigger the tool code
 
-	#1) EMAIL LIST
-	#this one is specific to the "Email List" tag, this will start the tool
-	"""def emailList(self):
-		startTool = True #this will be used to determine whether to start the tool or not, it is a unique bool for each frame
-		args = "" #these are the arguments pushed to the tool
-
-		if self.__filenames["0"] == "":
-			self.__terminal.enterLine("Please provide a class schedule file.")
-			startTool = False
-		else:
-			args += self.__filenames["0"] + ", "
-
-		if self.__filenames["1"] == "":
-			self.__terminal.enterLine("Please provide an email list file with professor emails.")
-			startTool = False
-		else:
-			args += self.__filenames["1"]
-
-		#start the tool if possible
-		if startTool:
-			print(args)
-			self.__terminal.enterLine(args)
-			#args = self.__filenames["0"] + " " + self.__filenames["1"]
-			#self.__terminal.runProcess("tools/emailList.py", args)"""
-
 	#2) CREATE ABET CABINET
 	#this tool will trigger the "Create ABET Cabinet" folder
 	def createFolder(self, e, settingsPath):
@@ -277,7 +252,7 @@ class BodyFrame(ActionMethods):
 
 	#8) PARSE INDIRECT
 	#this command will trigger the "Parse Indirect" tool
-	def parseIndirect(self, settingssP):
+	def parseIndirect(self, settingsP):
 		startTool = True
 		args = list()
 
@@ -668,7 +643,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d, path))
+		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda e=entryBox: self.createFolder(e, path))
 		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
@@ -842,9 +817,9 @@ class BodyFrame(ActionMethods):
 
 	#4) PARSE DIRECT
 	def ParseDirect(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine("- Progess terminal for the Audit -->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("- Progess terminal for the Direct Assessment-->")
+		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
 
 		canvas = Canvas(self.__styleFrame, highlightthickness=0)
 		canvas.pack(side=LEFT, fill=BOTH, expand=1)
@@ -864,44 +839,50 @@ class BodyFrame(ActionMethods):
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
 		------------------------"""
-
-		divider = Label(bodyFrame, font=("san-serif", 3))
-		divider.grid(sticky=W, row=0, column=0, padx=5)
-
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		selectFolderDesc.insert('1.0', "--> Select the most recent ABET Cabinet directory.")
 		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=10, pady=5)
+		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		indirectFolderButton = Button(bodyFrame, text="Select ABET Cabinet Directory", command=lambda:self.getFolderForGrid(bodyFrame, "directCabinet", "0"))
-		indirectFolderButton.grid(sticky=W, row=2, column=0, padx=5)
+		indirectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0))
 
 		indirectFolderLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="directCabinet")
-		indirectFolderLabel.grid(sticky=W, row=3, padx=7)
+		indirectFolderLabel.grid(sticky=W, row=3, padx=(7, 0), pady=(0, 2))
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
 
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		selectFolderDesc.insert('1.0', "--> Select the directory to save the direct assessment data.")
 		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.grid(sticky=W, row=4, column=0, padx=10, pady=5)
+		selectFolderDesc.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(2,2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFolderButton = Button(bodyFrame, text="Select Save Directory", command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "saveDir", "1"))
-		selectFolderButton.grid(sticky=W, row=5, column=0, padx=5)
+		selectFolderButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(0, 2))
 
-		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="saveDir")
-		selectedFolderName.grid(sticky=W, row=6, column=0, padx=7)
+		selectedFolderName = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDir")
+		selectedFolderName.grid(sticky=W, row=7, column=0, padx=(7, 0), pady=(0, 2))
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=8, column=0, padx=10)
 
 		#---------------------------
 		#this is where the user will select with folder to search for the outcome
 
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the directory that holds the ABET outcome data.")
+		selectFolderDesc.insert('1.0', "--> Select which folder you would like to parse for the outcome data.")
 		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.grid(sticky=W, row=7, column=0, padx=10, pady=5)
+		selectFolderDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2, 2))
 
 		outputFolderToSearch = Frame(bodyFrame, bg="#323232", width=330, height=50)
-		outputFolderToSearch.grid(sticky=W, row=8, column=0)
+		outputFolderToSearch.grid(sticky=W, row=10, column=0)
 
 		path = self.get_file_path()
 
@@ -918,9 +899,14 @@ class BodyFrame(ActionMethods):
 				
 			radio.grid(sticky=W, row=val, column=0, padx=5, pady=5)
 			val += 1
-
+		
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=11, column=0, padx=10)
 
 		#---------------------------
 
@@ -929,15 +915,26 @@ class BodyFrame(ActionMethods):
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "--> Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=9, column=0, padx=10, pady=5)
+		entryDesc.grid(sticky=W, row=12, column=0, padx=10, pady=(2, 2))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a file name here")
-		entryBox.grid(sticky=W, row=10, column=0, padx=10, pady=7)
+		entryBox.grid(sticky=W, row=13, column=0, padx=(10, 0), pady=(3, 2))
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=14, column=0, padx=10, pady=(2, 0))
+
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+		
 		#-----------------------
 		#this will start the tool
 
@@ -945,13 +942,10 @@ class BodyFrame(ActionMethods):
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=11, column=0, padx=10, pady=5)
+		startToolDesc.grid(sticky=W, row=15, column=0, padx=10, pady=(2, 2))
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda data=jsonData: self.parseDirect(entryBox, data))
-		startToolButton.grid(sticky=W, row=12, column=0, padx=5)
-
-		divider2 = Label(bodyFrame, font=("san-serif", 3))
-		divider2.grid(sticky=W, row=13, column=0, padx=5)
+		startToolButton.grid(sticky=W, row=16, column=0, padx=5, pady=(0, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
@@ -962,72 +956,67 @@ class BodyFrame(ActionMethods):
 		self.__terminal.enterLine("- Progess terminal for Parsing Exit Int. -->")
 		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 
-		#this canvas will hold the scrollbar, as well as the frame that will grow with the scrollbar
-		canvas = Canvas(self.__styleFrame, highlightthickness=0)
-		canvas.pack(side=LEFT, fill=BOTH, expand=1)
-
-		#this is the scrollbar associated with the canvas
-		scrollBar = ttk.Scrollbar(self.__styleFrame, orient=VERTICAL, command=canvas.yview)
-		scrollBar.pack(side=RIGHT, fill=Y)
-
-		#this sets the scrollbar to work with the canvas
-		canvas.configure(yscrollcommand=scrollBar.set)
-		canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
-		#this is the bodyframe that will hold content of the application
-		bodyFrame = Frame(canvas)
-
-		#this is like creating a window inside the canvas, that will grow, almost drawing the 
-		#tool as it expands
-		canvas.create_window((0, 0), window=bodyFrame, anchor="nw")
+		"""------------------------
+		This section is kinda a hack, it will allow the user to scroll through the application
+		because tkinter doesn't have a dedicated scrolling options, and I would like to keep the 
+		design as compact as possible
+		------------------------"""
+		#create the scrollframe
+		bodyFrame, canvas = self.createScrollFrame()
 
 		"""------------------------
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
 		------------------------"""
-
-		divider = Label(bodyFrame, font=("san-serif", 3))
-		divider.grid(sticky=W, row=0, column=0, padx=5)
-
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "--> Select the file that holds the exit interview results.")
 		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=5)
+		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
 		#this is for later, this just needs to be defined here
 		exitFrame = Frame(bodyFrame, width=330, name="exFm")
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Exit Interview Results", command=lambda x=165, y=65: self.getFile("exitFileName", "0", exitFrame, bodyFrame, canvas))
-		selectFileButton.grid(sticky=W, row=3, column=0, padx=5)
+		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="exitFileName")
-		selectedFileName.grid(sticky=W, row=4, column=0, padx=7)
+		selectedFileName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
 
 		#this is wherre the headers of the file will be displayed
 		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
 		selectedFileHeaderDesc.insert('1.0', "--> The header columns of the selected file will be displayed. Select the columns to be used by the tool.")
 		selectedFileHeaderDesc.config(state=DISABLED)
-		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=10, pady=5)
+		selectedFileHeaderDesc.grid(sticky=W, row=4, column=0, padx=10, pady=(0,2))
 
-		exitFrame.grid(sticky=W, row=6, column=0, padx=5)
+		exitFrame.grid(sticky=W, row=5, column=0, padx=5)
 
 		#add label to the frame
 		noCheckBox = Label(exitFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
 		noCheckBox.grid(sticky=W, row=0, column=0)
 
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=6, column=0, padx=10, pady=(2, 0))
+
 		#this is the entry area
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "--> Enter the name of the file for the parsed exit interview data.")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=7, column=0, padx=10, pady=5)
+		entryDesc.grid(sticky=W, row=7, column=0, padx=10, pady=(2, 2))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a file name here")
-		entryBox.grid(sticky=W, row=8, column=0, padx=10, pady=10)
+		entryBox.grid(sticky=W, row=8, column=0, padx=10, pady=(3,2))
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=9, column=0, padx=10, pady=(2, 0))
 
 		#----------------------------
 		#this will select the destination of the associated email file
@@ -1035,58 +1024,31 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "--> Select the destination of the final parsed exit interview here.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=9, column=0, padx=10, pady=5)
+		destinationOfResutlingFile.grid(sticky=W, row=10, column=0, padx=10, pady=5)
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=10, column=0, padx=5)
+		destinationButton.grid(sticky=W, row=11, column=0, padx=5)
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=11, padx=7)
+		destinationLabel.grid(sticky=W, row=12, padx=7)
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=13, column=0, padx=10, pady=(2, 0))
 		#----------------------------
 
 		#Start the tool now
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=12, column=0, padx=10, pady=5)
+		startToolDesc.grid(sticky=W, row=14, column=0, padx=10, pady=(2,2))
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda :self.exitInterview(entryBox))
-		startToolButton.grid(sticky=W, row=13, column=0, padx=5)
-
-		divider2 = Label(bodyFrame, font=("san-serif", 3))
-		divider2.grid(sticky=W, row=14, column=0, padx=5)
+		startToolButton.grid(sticky=W, row=15, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
-
-		"""selectFolderDesc = Text(self.__styleFrame, bg="#323232", width=40, height=10, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the exit interview results file.")
-		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.place(x=10, y=10)
-
-		selectFile = Button(self.__styleFrame, text="Select Exit Data", command=lambda x=145, y=37: self.getFile(x, y, "exitData", "0"))
-		selectFile.place(x=5, y=35)
-
-		nameFinalFileDesc = Text(self.__styleFrame, bg="#323232", width=40, height=5, wrap=WORD, highlightthickness=0)
-		nameFinalFileDesc.insert("1.0", "--> Name the file that will hold the parsed exit interview. (*.csv)")
-		nameFinalFileDesc.config(state=DISABLED)
-		nameFinalFileDesc.place(x=10, y=65)
-
-		#This is the entry box
-		entryBox = Entry(self.__styleFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
-		entryBox.insert(0, "Enter a folder name here")
-		entryBox.place(x=8, y=96, width=200)
-		entryBox.config(insertbackground="#000000")
-
-		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
-
-		startToolDesc = Text(self.__styleFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		startToolDesc.insert("1.0", "--> Start Tool")
-		startToolDesc.config(state=DISABLED)
-		startToolDesc.place(x=10, y=125)
-
-		startTool = Button(self.__styleFrame, text="Start Tool", command=lambda e=entryBox: self.exitInterview(e))
-		startTool.place(x=5, y=138)"""
 
 	#6) READ INDIRECT
 	def ReadIndirect(self):
@@ -1183,45 +1145,34 @@ class BodyFrame(ActionMethods):
 		self.__terminal.enterLine("- Progess terminal for Parsing Indirect Data -->")
 		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 
-		#this canvas will hold the scrollbar, as well as the frame that will grow with the scrollbar
-		canvas = Canvas(self.__styleFrame, highlightthickness=0)
-		canvas.pack(side=LEFT, fill=BOTH, expand=1)
-
-		#this is the scrollbar associated with the canvas
-		scrollBar = ttk.Scrollbar(self.__styleFrame, orient=VERTICAL, command=canvas.yview)
-		scrollBar.pack(side=RIGHT, fill=Y)
-
-		#this sets the scrollbar to work with the canvas
-		canvas.configure(yscrollcommand=scrollBar.set)
-		canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
-		#this is the bodyframe that will hold content of the application
-		bodyFrame = Frame(canvas)
-
-		#this is like creating a window inside the canvas, that will grow, almost drawing the 
-		#tool as it expands
-		canvas.create_window((0, 0), window=bodyFrame, anchor="nw")
+		"""------------------------
+		This section is kinda a hack, it will allow the user to scroll through the application
+		because tkinter doesn't have a dedicated scrolling options, and I would like to keep the 
+		design as compact as possible
+		------------------------"""
+		#create the scrollframe
+		bodyFrame, canvas = self.createScrollFrame()	
 
 		"""------------------------
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
-		------------------------"""
-
-		divider = Label(bodyFrame, font=("san-serif", 3))
-		divider.grid(sticky=W, row=0, column=0, padx=5)
-
+		------------------------"""	
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "--> Select the file that holds the indirect assessment data.")
 		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=5)
+		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Indirect Results File", command=lambda x=165, y=65: self.getFile("indirectAssessment", "0", None, bodyFrame, canvas))
-		selectFileButton.grid(sticky=W, row=2, column=0, padx=5)
+		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="indirectAssessment")
-		selectedFileName.grid(sticky=W, row=3, column=0, padx=7)
+		selectedFileName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
 
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
 
 		#----------------------
 		#this is the save destination
@@ -1229,13 +1180,18 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "--> Select the destination of the further parsed data.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=12, column=0, padx=10, pady=5)
+		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=10, pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=13, column=0, padx=5)
+		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(0, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=14, padx=7)
+		destinationLabel.grid(sticky=W, row=7, padx=(7, 0), pady=(0, 2))
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=8, column=0, padx=10)
 
 		#-----------------------
 		#this will start the tool
@@ -1244,15 +1200,12 @@ class BodyFrame(ActionMethods):
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=17, column=0, padx=10, pady=5)
+		startToolDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2,2))
 
 		path = self.get_file_path()
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.parseIndirect(path))
-		startToolButton.grid(sticky=W, row=18, column=0, padx=5)
-
-		divider2 = Label(bodyFrame, font=("san-serif", 3))
-		divider2.grid(sticky=W, row=19, column=0, padx=5)
+		startToolButton.grid(sticky=W, row=10, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
@@ -1290,7 +1243,7 @@ class BodyFrame(ActionMethods):
 		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "----------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=2, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=2, column=0, padx=10, pady=(0, 2))
 
 		"""------------------------
 		This will allow the users the ability to change the classes and their outcomes
@@ -1299,180 +1252,183 @@ class BodyFrame(ActionMethods):
 		classFrame = Frame(bodyFrame, bg="#323232", width=330, height=50)
 		classFrame.grid(sticky=W, row=3, column=0)
 
-		#--------
-		#These are the columns for this section, add to the classFrame, NOT bodyFrame
-		#--------
-		classLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="Class Name")
-		classLabel.grid(sticky=W, row=1, column=1, padx=(10, 3), pady=5)
+		#these are the columns that are label what is being dipslayed
+		labelTest = Label(classFrame, bg="#323232", fg="#ffffff", text="Class Name", width=11)
+		labelTest.grid(sticky=W, row=1, column=0)
 
-		outcomeLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="Class Outcomes")
-		outcomeLabel.grid(sticky=W, row=1, column=2, padx=(0, 3), pady=5)
+		#these are the columns that are label what is being dipslayed
+		labelTest2 = Label(classFrame, bg="#323232", fg="#ffffff", text="Outcome(s)", width=11)
+		labelTest2.grid(sticky=W, row=1, column=1)
 
-		opLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="Operation")
-		opLabel.grid(sticky=W, row=1, column=3, pady=5, padx=(3, 0))
-
-		#Adding Labels here
+		#these are the columns that are label what is being dipslayed
+		labelTest3 = Label(classFrame, bg="#323232", fg="#ffffff", text="Operation", width=11)
+		labelTest3.grid(sticky=W, row=1, column=2)
 
 		row = 2 #starting row
 		for keys in settingsValues["Classes"].keys():
 
-			#this is dynamic based on the values in the settings.json file
-			classesLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="+ " + keys + " -->", name="label"+keys)
-			classesLabel.grid(sticky=W, row=row, column=1, padx=(10, 3), pady=5)
+			classLabel = Label(classFrame, bg="#323232", fg="#ffffff", text="+ " + keys + " -->", name="label"+keys, width=11)
+			classLabel.grid(sticky=W, row=row, column=0, pady=(2, 2))
 
-			#this will format the different outcomes needed
 			if len(settingsValues["Classes"][keys]) > 1:
-				outcomes = "" #this string will hold the outcomes
-				#if there is more then one outcome, do it here
+				outcomes = ""
 				for out in settingsValues["Classes"][keys]:
 					if len(settingsValues["Classes"][keys]) - 1 != settingsValues["Classes"][keys].index(out):
 						outcomes += str(out) + ", "
 					else:
 						outcomes += str(out)
 			else:
-				#if there is only one outcome, do this
 				outcomes = settingsValues["Classes"][keys][0]
 
-			#create the label that holds the outcomes
-			classesOutcome = Label(classFrame, bg="#323232", fg="#ffffff", text=outcomes, name="out"+keys)
-			classesOutcome.grid(sticky=W, row=row, column=2, padx=(0,3), pady=5)
+			classesOutcome = Label(classFrame, bg="#323232", fg="#ffffff", text=outcomes, name="out"+keys, width=11);
+			classesOutcome.grid(sticky=W, row=row, column=1, pady=(2, 2))
 
 			#create the button that will complete the different operations
-			deleteButton = Button(classFrame, text="del", name="but"+keys, command=lambda name=keys: self.removeFromEnv( name, classFrame, canvas, bodyFrame, "Classes"))
-			deleteButton.grid(sticky=W, row=row, column=3, pady=5, padx=(3, 0))
+			deleteButton = Button(classFrame, text="delete", width=7, name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, classFrame, canvas, bodyFrame, "Classes", path))
+			deleteButton.grid(sticky=W, row=row, column=2, pady=(2,2))
 
 			row+=1
 
-		#------
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+
 		#these are dividing labels that will separate the addition section from the rest of the rows
-		dividingLabel = Label(classFrame, text="----------", bg="#323232", fg="#ffffff")
-		dividingLabel.grid(sticky=W, row=row, column=1, padx=(10, 3))
+		dividingLabel = Label(classFrame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=row, column=0)
 
-		dividingLabel = Label(classFrame, text="--------------", bg="#323232", fg="#ffffff")
-		dividingLabel.grid(sticky=W, row=row, column=2, padx=(0, 3))
+		dividingLabel = Label(classFrame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=row, column=1)
 
-		dividingLabel = Label(classFrame, text="---------", bg="#323232", fg="#ffffff")
-		dividingLabel.grid(sticky=W, row=row, column=3, padx=(3, 0))
-		#------
+		dividingLabel = Label(classFrame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=row, column=2)
 
 		row += 1
 
-		#------
-		#this is the addition section of the classframe, it will allow the user to add info to the settings.json file, as well as the actual page
-		entryBoxClass = Entry(classFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
-		entryBoxClass.insert(0, "Class Name")
-		entryBoxClass.grid(sticky=W, row=row, column=1, padx=(10, 3), pady=5)
-		entryBoxClass.config(insertbackground="#000000")
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
-		entryBoxClass.bind("<Button-1>", lambda event, e=entryBoxClass: self.entryClick(event, e))
+		entryBlock = Entry(classFrame, bg="#ffffff", fg="#bebebe", width=9, highlightthickness=0, relief=FLAT)
+		entryBlock.insert(0, "Class Name")
+		entryBlock.grid(sticky=W, row=row, column=0, pady=(2, 6), padx=(10, 0))
+		entryBlock.config(insertbackground="#000000")
 
-		entryBoxOutcome = Entry(classFrame, bg="#ffffff", fg="#bebebe", width=11, highlightthickness=0, relief=FLAT)
+		entryBlock.bind("<Button-1>", lambda event, e=entryBlock: self.entryClick(event, e))
+
+		entryBoxOutcome = Entry(classFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
 		entryBoxOutcome.insert(0, "Outcomes")
-		entryBoxOutcome.grid(sticky=W, row=row, column=2, padx=(7, 4), pady=5)
+		entryBoxOutcome.grid(sticky=W, row=row, column=1, pady=(2, 6), padx=(5, 0))
 		entryBoxOutcome.config(insertbackground="#000000")
 
 		entryBoxOutcome.bind("<Button-1>", lambda event, e=entryBoxOutcome: self.entryClick(event, e))
 
-		path = self.get_file_path()
+		addButton = Button(classFrame, text="add", command=lambda: self.addToEnv(path, entryBlock, entryBoxOutcome, canvas, bodyFrame, "", classFrame, "Classes"), width=6)
+		addButton.grid(sticky=W, row=row, column=2, pady=(0, 6), padx=(6, 0))
 
-		addButton = Button(classFrame, text="add", command=lambda: self.addToEnv(path, entryBoxClass, entryBoxOutcome, canvas, bodyFrame))
-		addButton.grid(sticky=W, row=row, column=3, pady=0, padx=(3, 0))
-		#------
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
-		#this is another dividing frame that will separate the different operations in this page
+		row += 1
+
 		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "----------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=row, column=0, padx=10, pady=0)
 
-		#this will tell the user what this section does
-		subfolderLabel = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		subfolderLabel.insert('1.0', "--> Change the subfolders generated by the tool.")
-		subfolderLabel.config(state=DISABLED)
-		subfolderLabel.grid(sticky=W, row=5, column=0, padx=10, pady=5)
+		row += 1
+
+		#this is the intro text block telling the user what they can do with this section
+		introLabel = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		introLabel.insert('1.0', "--> This section will allow you to define what subfolders are generated when the cabinet is created")
+		introLabel.config(state=DISABLED)
+		introLabel.grid(sticky=W, row=row, column=0, padx=10, pady=(0, 2))
+
+		row += 1
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=row, column=0, padx=10, pady=(0, 2))
+
+		row += 1
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 		#this frame will hold the values from the settings.json file
-		subfolderFrame = Frame(bodyFrame, bg="#323232", width=330, height=50)
-		subfolderFrame.grid(sticky=W, row=6, column=0)
+		"""subfolderFrame = Frame(bodyFrame, bg="#323232", width=330, height=50)
+		subfolderFrame.grid(sticky=W, row=row, column=0, pady=(0, 10))
 
 		#--------
 		#these are the columns in this frame, added to the subfolderFrame, NOT the bodyframe
-		mainFolderLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Main Folder")
-		mainFolderLabel.grid(sticky=W, row=1, column=1, padx=(2, 0), pady=5)
+		mainFolderLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Main Folder", width=11)
+		mainFolderLabel.grid(sticky=W, row=1, column=0)
 
-		subfolderLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Subfolders")
-		subfolderLabel.grid(sticky=W, row=1, column=2, padx=(2, 2), pady=5)
+		subfolderLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Subfolders", width=11)
+		subfolderLabel.grid(sticky=W, row=1, column=1)
 
-		opLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Operation")
-		opLabel.grid(sticky=W, row=1, column=3, pady=5, padx=0)
-		#--------
+		opLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="Operation", width=11)
+		opLabel.grid(sticky=W, row=1, column=2)
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+		#--------
 
-
-		row = 2
+		rowSub = 2
 		for keys in settingsValues["Subfolders"].keys():
-			mnLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text="+ " + keys + " --> ", name="label" + keys)
-			mnLabel.grid(sticky=W, row=row, column=1, padx=(2, 0), pady=5)
+			mnLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text=keys, name="label" + keys, width=11)
+			mnLabel.grid(sticky=W, row=rowSub, column=0, pady=(2, 2))
 
-			opButton = Button(subfolderFrame, text="del", name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"))
-			opButton.grid(sticky=W, row=row, column=3, pady=0, padx=0)
+			opButton = Button(subfolderFrame, text="delete", name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"), width=7)
+			opButton.grid(sticky=W, row=rowSub, column=2, pady=(2, 2))
 
 			if len(settingsValues["Subfolders"][keys]) != 0:
 				for sfFolder in settingsValues["Subfolders"][keys]:
-					row += 1
+					rowSub += 1
 
 					#this is the actual subfolder
-					sbFolder = Label(subfolderFrame, bg="#323232", fg="#ffffff", text=sfFolder + " --> ", name="fl" + sfFolder)
-					sbFolder.grid(sticky=W, row=row, column=2, padx=0, pady=5)
+					sbFolder = Label(subfolderFrame, bg="#323232", fg="#ffffff", text=sfFolder, name="fl" + sfFolder, width=11)
+					sbFolder.grid(sticky=W, row=rowSub, column=1, padx=0, pady=5)
 
-					opButton = Button(subfolderFrame, text="del", name="but"+sfFolder, command=lambda name=sfFolder: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"))
-					opButton.grid(sticky=W, row=row, column=3, pady=0, padx=5)
-			
+					opButton = Button(subfolderFrame, text="delete", name="but"+sfFolder, command=lambda name=sfFolder: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"), width=7)
+					opButton.grid(sticky=W, row=rowSub, column=2, pady=0)
 
-			row += 1
-
-		canvas.update_idletasks()
-		canvas.configure(scrollregion=bodyFrame.bbox("all"))
-
-		dividingLabel = Label(subfolderFrame, text="----------", bg="#323232", fg="#ffffff", name="dividingLine1")
-		dividingLabel.grid(sticky=W, row=row, column=1, padx=10)
-
-		dividingLabel = Label(subfolderFrame, text="---------", bg="#323232", fg="#ffffff", name="dividingLine2")
-		dividingLabel.grid(sticky=W, row=row, column=2, padx=10)
-
-		dividingLabel = Label(subfolderFrame, text="---------", bg="#323232", fg="#ffffff", name="dividingLine3")
-		dividingLabel.grid(sticky=W, row=row, column=3, padx=10)
-
-		row+=1
-
-		entryBoxMain = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT, name="addButtonSubEntry")
-		entryBoxMain.insert(0, "Class Name")
-		entryBoxMain.grid(sticky=W, row=row, column=1, padx=10, pady=5)
-		entryBoxMain.config(insertbackground="#000000")
-
-		entryBoxMain.bind("<Button-1>", lambda event, e=entryBoxMain: self.entryClick(event, e))
-
-		entryBoxSub = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT, name="addButtonSubEntry2")
-		entryBoxSub.insert(0, "Subfolder")
-		entryBoxSub.grid(sticky=W, row=row, column=2, padx=0, pady=5)
-		entryBoxSub.config(insertbackground="#000000")
-
-		entryBoxSub.bind("<Button-1>", lambda event, e=entryBoxSub: self.entryClick(event, e))
-
-		addButton = Button(subfolderFrame, text="add", name="addButtonSub", command=lambda: self.addToEnv(settingsValues, entryBoxFolder, None, canvas, bodyFrame, "addButtonSub", subfolderFrame))
-		addButton.grid(sticky=W, row=row, column=3, pady=5, padx=10)
-
-		#this will introduce what is going on with this section
-		divider = Label(bodyFrame, font=("san-serif", 3))
-		divider.grid(sticky=W, row=7, column=0, padx=5)
+			rowSub += 1
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
+
+		#these are dividing labels that will separate the addition section from the rest of the rows
+		dividingLabel = Label(subfolderFrame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=rowSub, column=0)
+
+		dividingLabel = Label(subfolderFrame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=rowSub, column=1)
+
+		dividingLabel = Label(subfolderFrame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=rowSub, column=2)
+
+		rowSub += 1
+
+		entryBlock = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=9, highlightthickness=0, relief=FLAT)
+		entryBlock.insert(0, "Class Fldr")
+		entryBlock.grid(sticky=W, row=rowSub, column=0, pady=(2, 6), padx=(10, 0))
+		entryBlock.config(insertbackground="#000000")
+
+		entryBlock.bind("<Button-1>", lambda event, e=entryBlock: self.entryClick(event, e))
+
+		entryBoxOutcome = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
+		entryBoxOutcome.insert(0, "Subfolder")
+		entryBoxOutcome.grid(sticky=W, row=rowSub, column=1, pady=(2, 6), padx=(5, 0))
+		entryBoxOutcome.config(insertbackground="#000000")
+
+		entryBoxOutcome.bind("<Button-1>", lambda event, e=entryBoxOutcome: self.entryClick(event, e))
+
+		addButton = Button(subfolderFrame, text="add", command=lambda: self.addToEnv(path, entryBlock, entryBoxOutcome, canvas, bodyFrame), width=6)
+		addButton.grid(sticky=W, row=rowSub, column=2, pady=(0, 6), padx=(6, 0))
+
+		canvas.update_idletasks()
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))"""
+
 
 	#this needs to stay here, this will hold each function to create each frame, I just need to save them here as I create them
 	#__functions = {0: EmailList, 1: CabinetCreate, 2: DownloadCabinet, 3: AuditCabinet, 4: ParseAudit,

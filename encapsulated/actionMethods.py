@@ -2,6 +2,7 @@ import json
 from tkinter import *
 from toolsObjs.emailList import EmailList
 from toolsObjs.auditFolder import AuditFolder
+import os
 
 class ActionMethods:
 
@@ -21,93 +22,126 @@ class ActionMethods:
 	def changeRadio(self, val):
 		self.__radio = val
 
-	#This will add data to the json file that holds the settings
-	def addToEnv(self, data, e1, e2, cv, parent, name, frame):
+	def finalObjectsAddEnv(self, frame, row, cv, parent, name, obj, path):
 
-		fl = open("encapsulated/settings.json", "r")
+		#remove the original entry boxes
+		frame.grid_slaves(row, 0)[-1].grid_remove()
+		frame.grid_slaves(row, 1)[-1].grid_remove()
+		frame.grid_slaves(row, 2)[-1].grid_remove()
+
+		dividingLabel = Label(frame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=row, column=0)
+
+		dividingLabel = Label(frame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=row, column=1)
+
+		dividingLabel = Label(frame, text="--------------", bg="#323232", fg="#ffffff", width=11)
+		dividingLabel.grid(sticky=W, row=row, column=2)
+
+		row += 1
+
+		#this will add back the entry boxes
+
+		entryBlock = Entry(frame, bg="#ffffff", fg="#bebebe", width=9, highlightthickness=0, relief=FLAT)
+		entryBlock.insert(0, "Class Name")
+		entryBlock.grid(sticky=W, row=row, column=0, pady=(2, 6), padx=(10, 0))
+		entryBlock.config(insertbackground="#000000")
+
+		entryBlock.bind("<Button-1>", lambda event, e=entryBlock: self.entryClick(event, e))
+
+		entryBoxOutcome = Entry(frame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
+		entryBoxOutcome.insert(0, "Outcomes")
+		entryBoxOutcome.grid(sticky=W, row=row, column=1, pady=(2, 6), padx=(5, 0))
+		entryBoxOutcome.config(insertbackground="#000000")
+
+		entryBoxOutcome.bind("<Button-1>", lambda event, e=entryBoxOutcome: self.entryClick(event, e))
+
+		addButton = Button(frame, text="add", command=lambda: self.addToEnv(path, entryBlock, entryBoxOutcome, cv, parent, name, frame, obj), width=6)
+		addButton.grid(sticky=W, row=row, column=2, pady=(0, 6), padx=(6, 0))
+
+		#add the data back to the settings.json file
+
+
+	#This will add data to the json file that holds the settings
+	def addToEnv(self, path, e1, e2, cv, parent, name, frame, obj):
+
+		fl = open(os.path.join(path, "settings.json"), "r")
 		data = json.load(fl)
 
-		if e2 != None:
-			#this is if we are chaning the outcome assessment
-			#-----------------------------------------------
-			line = [] #this is the line of data
+		if obj == "Classes":
+			
+			flag = True
 
-			#if there is a nonempty second entry box, we can see if there are more than
-			#one outcome for the class
-			for vals in e2.get().strip().split(","):
-				val = None #this is an individual outcome value
+			#1. This will test to see if the first entry box is filled or not
+			if len(e1.get().strip()) == 0 or e1.get().strip() == "Class Name":
+				flag = False
+
+			#2. this will see if the outcomes are correct, meaning, are they whole numbers
+			outcomes = []
+			if len(e2.get().strip()) > 1:
+				for outcome in e2.get().split(","):
+					outcome = outcome.strip()
+					try:
+						int(outcome)
+					except:
+						self.__terminal.enterLine("Please make sure the outcomes are whole numbers")
+						flag = False
+						break
+
+					if flag and (int(outcome) >= 1 and int(outcome) <= 6):
+						outcomes.append(int(outcome))
+					else:
+						self.__terminal.enterLine("Please choose an outcome in the range of 1 - 6")
+						flag = False
+			else:
 				try:
-					val = int(vals.strip()) #we see if it's an int
+					int(e2.get().strip())
 				except:
-					#if it's not an integer, then we warn the user, and break from this call
-					self.__terminal.enterLine("Outcome Value provided is not an integer.")
-					break
+					self.__terminal.enterLine("Please make sure the outcome is a whole numbers")
+					flag = False
 
-				line.append(val) #append to the line variable above
+				if flag and (int(e2.get().strip()) >= 1 and int(e2.get().strip()) <= 6):
+					outcomes.append(int(e2.get().strip()))
+				else:
+					self.__terminal.enterLine("Please choose an outcome in the range of 1 - 6")
+					flag = False
+			
+			#3. this will add the content to the page
+			if flag:
+				rowNumber = frame.grid_size()[1]
+				rowNumber -= 2
 
+				frame.grid_slaves(rowNumber, 0)[-1].grid_remove()
+				frame.grid_slaves(rowNumber, 1)[-1].grid_remove()
+				frame.grid_slaves(rowNumber, 2)[-1].grid_remove()
 
-			data["Classes"][e1.get().strip()] = line #add to the settings.json file
+				columnZeroLabel = Label(frame, bg="#323232", fg="#ffffff", text="+ " + e1.get().strip() + " --> ", name="label" + e1.get().strip(), width=11)
+				columnZeroLabel.grid(sticky=W, row=rowNumber, column=0, pady=(2,2))
+				
+				columnOneLabel = Label(frame, bg="#323232", fg="#ffffff", text=e2.get().strip(), name="out" + e1.get().strip(), width=11)
+				columnOneLabel.grid(sticky=W, row=rowNumber, column=1, pady=(2,2))
 
-		else:
-			#if we are just concerned with adding subfolders, then we don't have 
-			#a second entrybox, we'll just add the data to the subfolder as is
-			data["Subfolders"].append(e1.get().strip())
+				opButton = Button(frame, text="delete", name="but"+e1.get().strip(), command=lambda name=e1.get().strip(): self.removeFromEnv(e1.get().strip(), frame, cv, parent, "Classes", path), width=7)
+				opButton.grid(sticky=W, row=rowNumber, column=2, pady=(2, 2))
 
-		rowNumber = frame.grid_size()[1]
-		rowNumber -= 2
+				rowNumber += 1
 
-		sfLabel = Label(frame, bg="#323232", fg="#ffffff", text="+ " + e1.get().strip() + " --> ", name="label" + e1.get().strip())
-		sfLabel.grid(sticky=W, row=rowNumber, column=1, padx=10, pady=5)
+				#added everything to the json file
+				data["Classes"][e1.get().strip()] =  outcomes
 
-		opButton = Button(frame, text="del", name="but"+e1.get().strip(), command=lambda name=e1.get().strip(): self.removeFromEnv(name, frame, cv, parent, "Subfolders"))
-		opButton.grid(sticky=W, row=rowNumber, column=2, pady=5, padx=10)
+				jsonObj = json.dumps(data, indent=4)
 
-		rowNumber += 1
+				with open(os.path.join(path, "settings.json"), "w") as file:
+					file.write(jsonObj)
 
-		#this will start moving stuff down, but we need to remove the objects that are already there
-		for c in frame.winfo_children():
-			if str(type(c)) == "<class 'tkinter.Label'>":
-				if str(c).find("dividingLine") != -1:
-					c.grid_forget()
-			elif str(type(c)) == "<class 'tkinter.Button'>":
-				if str(c).find(name) != -1:
-					c.grid_forget()
-			elif str(type(c)) == "<class 'tkinter.Entry'>":
-				if str(c).find(name) != -1:
-					c.grid_forget()
+				#call the final elements to be added
+				self.finalObjectsAddEnv(frame, rowNumber, cv, parent, name, obj, path)
 
-		#add the dividing lines again
-		dividingLabel = Label(frame, text="----------", bg="#323232", fg="#ffffff", name="dividingLine1")
-		dividingLabel.grid(sticky=W, row=rowNumber, column=1, padx=10)
+	def removeFromEnv(self, name, frame, cv, parent, envKey, path):
 
-		dividingLabel = Label(frame, text="---------", bg="#323232", fg="#ffffff", name="dividingLine2")
-		dividingLabel.grid(sticky=W, row=rowNumber, column=2, padx=10)
-
-		rowNumber += 1
-
-		#add back the entry box and the add button so this thing starts working again
-		entryBoxFolder = Entry(frame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT, name="addButtonSubEntry")
-		entryBoxFolder.insert(0, "Class Name")
-		entryBoxFolder.grid(sticky=W, row=rowNumber, column=1, padx=10, pady=5)
-		entryBoxFolder.config(insertbackground="#000000")
-
-		addButton = Button(frame, text="add", name="addButtonSub", command=lambda: self.addToEnv(data, entryBoxFolder, None, cv, parent, "addButtonSub", frame))
-		addButton.grid(sticky=W, row=rowNumber, column=2, pady=5, padx=10)
-
-		#update the size of the canvas and body frame, so the scrollbar fits
-		cv.update_idletasks()
-		cv.configure(scrollregion=parent.bbox("all"))
-
-		#actually sve the data that has been added
-		jsonObj = json.dumps(data, indent=4)
-
-		with open("encapsulated/settings.json", "w") as file:
-			file.write(jsonObj)
-
-	def removeFromEnv(self, name, frame, cv, parent, envKey):
-
+		print(name)
 		#open the data file again
-		fl = open("encapsulated/settings.json", "r")
+		fl = open(os.path.join(path, "settings.json"), "r")
 		data = json.load(fl)
 
 		#Start removing the labels and button associated with what is being removed
@@ -131,7 +165,7 @@ class ActionMethods:
 		#save the data
 		jsonObj = json.dumps(data, indent=4)
 
-		with open("encapsulated/settings.json", "w") as file:
+		with open(os.path.join(path, "settings.json"), "w") as file:
 			file.write(jsonObj)
 
 		#update the way the page looks

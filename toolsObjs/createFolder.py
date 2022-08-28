@@ -25,7 +25,11 @@ class CreateFolder:
 
 	def addCabinetStructure(self, path):
 		for fldrs in self.__settings["Subfolders"].keys():
-			os.mkdir(path + "/" + fldrs)
+			try:
+				os.mkdir(path + "/" + fldrs)
+			except:
+				self.__terminal.enterLine("There is a repeat of this class and section --> " + path)
+				break
 			for sbfldrs in self.__settings["Subfolders"][fldrs]:
 				os.mkdir(path + "/" + fldrs + "/" + sbfldrs)
 
