@@ -5,7 +5,6 @@ from tkinter import filedialog as fd
 from tkinter import ttk
 import re
 import pandas as pd
-from toolsObjs.createFolder import CreateFolder
 from toolsObjs.exitInt import ExitInt
 from toolsObjs.readIndirect import ReadIndirect
 from toolsObjs.parseIndirect import ParseIndirect
@@ -34,6 +33,10 @@ class BodyFrame(ActionMethods):
 
 	__emptyIncorrect = 0 #used in Parse Data section
 
+	__dropDownValues = []
+
+	__dropDownOpts = []
+
 	__root = None #this is the root application
 
 	__filenames = dict() #this will be when multiple files are selected
@@ -55,67 +58,10 @@ class BodyFrame(ActionMethods):
 
 		return path
 
+
 	#--------------------------------------------------
 	#--------------------------------------------------
 	#These methods below are attached to specific tags, and will trigger the tool code
-
-	#2) CREATE ABET CABINET
-	#this tool will trigger the "Create ABET Cabinet" folder
-	def createFolder(self, e, settingsPath):
-		startTool = True
-		args = list()
-
-		#check if the schedule is provided
-		if len(self.__filenames.keys()) != 0:
-			if self.__filenames["0"] == "":
-				self.__terminal.enterLine("Please provide a class schedule file.")
-				startTool = False
-			else:
-				args.append(self.__filenames["0"])
-				#We can look at the checkboxes selected here
-				allZero = True
-				checkB = list()
-				for keys in self.__checkBoxes["scheduleFileName"].keys():
-					if self.__checkBoxes["scheduleFileName"][keys].get() != 0:
-						checkB.append(keys)
-						allZero = False
-				
-				if allZero:
-					self.__terminal.enterLine("Please select at least one column to use from the provided file to start the tool")
-					startTool = False
-				else:
-					args.append(checkB)
-
-		else:
-			self.__terminal.enterLine("You need to provide a schedule file to start the tool.")
-			startTool = False
-
-		#check if the name is provided
-		if e.get().strip() == "Enter a folder name here" or e.get().strip() == "":
-			self.__terminal.enterLine("Enter a folder name to start using the tool.")
-			startTool = False
-		else:
-			args.append(e.get().strip())
-
-		if len(self.__directory.keys()) != 0:
-			if self.__directory["0"] == "":
-				self.__terminal.enterLine("Please provide a save directory.")
-				startTool = False
-			else:
-				args.append(self.__directory["0"])
-		else:
-			self.__terminal.enterLine("You need to provide a save directory to start the tool.")
-			startTool = False
-
-		#check if the tool can be started
-		if startTool:
-			#self.__terminal.enterLine(args)
-			inst = CreateFolder(self.__terminal, args, settingsPath)
-			inst.createCabinet()
-			#self.__terminal.runProcess("tools/createFolder.py", args)
-
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
-
 	def parseDirect(self, e, data):
 		startTool = True
 		args = list()
@@ -293,7 +239,7 @@ class BodyFrame(ActionMethods):
 	#These methods will be used to store data that will be pushed to the tools, and will generally be attached to button calls
 
 	#this will save multiple files, and it will also position to the label
-	def getFile(self, name, i, frame, bf, cv):
+	def getFile(self, name, i, frame, bf, cv, dp):
 		"""
 		-Parameter Desc
 		-self --> the class instance
@@ -302,6 +248,7 @@ class BodyFrame(ActionMethods):
 		-frame --> where the headers are placed if the file is an .xlsx or .csv
 		-bf --> bodyframe of the available data
 		-cv --> canvas that displays application
+		-dp --> drop down frame
 		"""
 
 		filename = fd.askopenfilename() #ask the user for the file
@@ -322,9 +269,42 @@ class BodyFrame(ActionMethods):
 			
 			#if I need to list headers, i will, otherwise, no frame is provided
 			if frame != None:
-				self.getHeaderOfFiles(filename, frame, bf, cv, name)
+				self.getHeaderOfFiles(filename, frame, bf, cv, name, dp)
 
-	def getHeaderOfFiles(self, file, frame, bf, cv, name):
+	def checkBoxChange(self, col, name, bf, dp):
+		"""
+		- bf --> bodyframe
+		- dp --> dropdown frame
+		"""
+
+		if dp != None:
+			for i in range(len(self.__dropDownOpts)):
+				if self.__checkBoxes[name][col].get() == 0:
+					self.__dropDownOpts[i].remove(col)
+				else:
+					self.__dropDownOpts[i].append(col)
+
+			for c in bf.winfo_children():
+				if str(c).find(name) != -1:
+					for ch in c.winfo_children():
+						if str(type(ch)) == "<class 'tkinter.OptionMenu'>":
+							ch.grid_forget()
+
+			for i in range(len(self.__dropDownOpts)):
+				dropOne = OptionMenu(dp, self.__dropDownValues[0], *self.__dropDownOpts[0])
+				dropOne.config(width=5)
+				dropOne.grid(sticky=W, row=2, column=0)
+
+				dropTwo = OptionMenu(dp, self.__dropDownValues[1], *self.__dropDownOpts[1])
+				dropTwo.config(width=5)
+				dropTwo.grid(sticky=W, row=2, column=1)
+
+				dropThree = OptionMenu(dp, self.__dropDownValues[2], *self.__dropDownOpts[2])
+				dropThree.config(width=5)
+				dropThree.grid(sticky=W, row=2, column=2)
+
+
+	def getHeaderOfFiles(self, file, frame, bf, cv, name, dp):
 		#remove the label from the frame
 		self.deleteChildren(False, bf, name, frame, cv)
 
@@ -335,7 +315,7 @@ class BodyFrame(ActionMethods):
 		for col in pandasData.columns:
 			#lbl = Label(frame, text=col)
 			self.__checkBoxes[name][col] = IntVar()
-			chkBt = Checkbutton(frame, text=col, variable=self.__checkBoxes[name][col], onvalue=1, offvalue=0, wraplength=300, justify=LEFT)
+			chkBt = Checkbutton(frame, text=col, variable=self.__checkBoxes[name][col], command=lambda col=col, name=name: self.checkBoxChange(col, name, bf, dp), onvalue=1, offvalue=0, wraplength=300, justify=LEFT)
 			chkBt.grid(sticky=W, row=r, column=0)
 			r+=1
 
@@ -468,7 +448,7 @@ class BodyFrame(ActionMethods):
 		------------------------"""
 		#this will prompt the user to select the file that lists the available classes
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "--> Select the schedule file (.xlsx or .csv) that lists the current semesters schedule.")
+		selectFileDesc.insert('1.0', "++ Select the schedule file (.xlsx or .csv) that lists the current semesters schedule.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=2, column=0, padx=(10, 0), pady=(10, 2))
 
@@ -478,9 +458,10 @@ class BodyFrame(ActionMethods):
 		------------------------"""
 		#this is for later, this just needs to be defined here
 		scheduleFrame = Frame(bodyFrame, width=330, name="scFm") #scFm == scheduleFrame
+		dropDownFrame = Frame(bodyFrame, width=320, height=30, name="dropFrame")
 
 		#this will prompt the user to select a file for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas))
+		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, dropDownFrame))
 		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(0, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
@@ -488,20 +469,69 @@ class BodyFrame(ActionMethods):
 
 		#this is wherre the headers of the file will be displayed
 		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=5, wrap=WORD, highlightthickness=0)
-		selectedFileHeaderDesc.insert('1.0', "--> The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Professor's Name, Class Number, Class Section]")
+		selectedFileHeaderDesc.insert('1.0', "++ The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Professor's Name, Class Number, Class Section]")
 		selectedFileHeaderDesc.config(state=DISABLED)
 		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(0, 2))
 
-		scheduleFrame.grid(sticky=W, row=6, column=0, padx=10)
+		scheduleFrame.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(0, 2))
 
 		#add label to the frame
 		noCheckBox = Label(scheduleFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
 		noCheckBox.grid(sticky=W, row=0, column=0)
-
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=7, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=7, column=0, pady=(0, 2))
+
+		"""--------------------------
+		#So this is where the headers that have been selected will be stored into a dropdown menu that will determine
+		#how the columns are used by the tool
+		------------------------""" 
+		dropDownDescription = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
+		dropDownDescription.insert('1.0', "++ When the header columns are selected, you need to choose which column will be for specific labels listed.")
+		dropDownDescription.config(state=DISABLED)
+		dropDownDescription.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(0, 2))
+
+		dropDownFrame.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=(2, 2))
+
+		labelOne = Label(dropDownFrame, text="Profressor", bg="#323232", fg="#ffffff", width=11)
+		labelOne.grid(sticky=W, row=1, column=0)
+
+		labelTwo = Label(dropDownFrame, text="Email", bg="#323232", fg="#ffffff", width=11)
+		labelTwo.grid(sticky=W, row=1, column=1)
+
+		labelThree = Label(dropDownFrame, text="Classes", bg="#323232", fg="#ffffff", width=11)
+		labelThree.grid(sticky=W, row=1, column=2)
+
+		self.__dropDownValues.append(StringVar())
+		self.__dropDownValues.append(StringVar())
+		self.__dropDownValues.append(StringVar())
+
+		self.__dropDownOpts.append(["----"])
+		self.__dropDownOpts.append(["----"])
+		self.__dropDownOpts.append(["----"])
+
+		self.__dropDownValues[0].set(self.__dropDownOpts[0][0])
+		self.__dropDownValues[1].set(self.__dropDownOpts[1][0])
+		self.__dropDownValues[2].set(self.__dropDownOpts[2][0])
+
+		dropOne = OptionMenu(dropDownFrame, self.__dropDownValues[0], *self.__dropDownOpts[0])
+		dropOne.config(width=5)
+		dropOne.grid(sticky=W, row=2, column=0)
+
+		dropTwo = OptionMenu(dropDownFrame, self.__dropDownValues[1], *self.__dropDownOpts[1])
+		dropTwo.config(width=5)
+		dropTwo.grid(sticky=W, row=2, column=1)
+
+		dropThree = OptionMenu(dropDownFrame, self.__dropDownValues[2], *self.__dropDownOpts[2])
+		dropThree.config(width=5)
+		dropThree.grid(sticky=W, row=2, column=2)
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=10, column=0, pady=(0, 2))
 		
 		"""--------------------------
 		#this will select the destination of the final create email file
@@ -509,18 +539,18 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "--> Select the destination of final email file (emailFile.csv) created by the tool.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(2, 2))
+		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=9, column=0, padx=(7, 0), pady=(0, 2))
+		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(0, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=10, padx=(7, 0), pady=(0, 2))
+		destinationLabel.grid(sticky=W, row=13, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=11, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=14, column=0, pady=(0, 2))
 
 		"""--------------------------
 		This seciton will start the tool
@@ -528,12 +558,12 @@ class BodyFrame(ActionMethods):
 		startTool = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		startTool.insert('1.0', "--> Press the button below to start the tool.")
 		startTool.config(state=DISABLED)
-		startTool.grid(sticky=W, row=12, column=0, padx=(10, 0), pady=(2, 2))
+		startTool.grid(sticky=W, row=15, column=0, padx=(10, 0), pady=(2, 2))
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d, path))
-		startToolButton.grid(sticky=W, row=13, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
@@ -571,7 +601,7 @@ class BodyFrame(ActionMethods):
 		scheduleFrame = Frame(bodyFrame, width=330, name="scFm") #scFm == scheduleFrame
 
 		#this will prompt the user to select a file for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas))
+		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, None))
 		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(0, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
@@ -643,7 +673,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda e=entryBox: self.createFolder(e, path))
+		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, e=entryBox: self.createFolder(e, f, c, d, path))
 		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
@@ -1284,7 +1314,7 @@ class BodyFrame(ActionMethods):
 			classesOutcome.grid(sticky=W, row=row, column=1, pady=(2, 2))
 
 			#create the button that will complete the different operations
-			deleteButton = Button(classFrame, text="delete", width=7, name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, classFrame, canvas, bodyFrame, "Classes", path))
+			deleteButton = Button(classFrame, text="delete", width=7, name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, classFrame, canvas, bodyFrame, "Classes", path, ""))
 			deleteButton.grid(sticky=W, row=row, column=2, pady=(2,2))
 
 			row+=1
@@ -1355,7 +1385,7 @@ class BodyFrame(ActionMethods):
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 		#this frame will hold the values from the settings.json file
-		"""subfolderFrame = Frame(bodyFrame, bg="#323232", width=330, height=50)
+		subfolderFrame = Frame(bodyFrame, bg="#323232", width=330, height=50)
 		subfolderFrame.grid(sticky=W, row=row, column=0, pady=(0, 10))
 
 		#--------
@@ -1378,7 +1408,7 @@ class BodyFrame(ActionMethods):
 			mnLabel = Label(subfolderFrame, bg="#323232", fg="#ffffff", text=keys, name="label" + keys, width=11)
 			mnLabel.grid(sticky=W, row=rowSub, column=0, pady=(2, 2))
 
-			opButton = Button(subfolderFrame, text="delete", name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"), width=7)
+			opButton = Button(subfolderFrame, text="delete", name="but"+keys, command=lambda name=keys: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders", path, ""), width=7)
 			opButton.grid(sticky=W, row=rowSub, column=2, pady=(2, 2))
 
 			if len(settingsValues["Subfolders"][keys]) != 0:
@@ -1389,7 +1419,7 @@ class BodyFrame(ActionMethods):
 					sbFolder = Label(subfolderFrame, bg="#323232", fg="#ffffff", text=sfFolder, name="fl" + sfFolder, width=11)
 					sbFolder.grid(sticky=W, row=rowSub, column=1, padx=0, pady=5)
 
-					opButton = Button(subfolderFrame, text="delete", name="but"+sfFolder, command=lambda name=sfFolder: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders"), width=7)
+					opButton = Button(subfolderFrame, text="delete", name="but"+sfFolder, command=lambda name=sfFolder, prt=keys: self.removeFromEnv(name, subfolderFrame, canvas, bodyFrame, "Subfolders", path, prt), width=7)
 					opButton.grid(sticky=W, row=rowSub, column=2, pady=0)
 
 			rowSub += 1
@@ -1409,25 +1439,25 @@ class BodyFrame(ActionMethods):
 
 		rowSub += 1
 
-		entryBlock = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=9, highlightthickness=0, relief=FLAT)
-		entryBlock.insert(0, "Class Fldr")
-		entryBlock.grid(sticky=W, row=rowSub, column=0, pady=(2, 6), padx=(10, 0))
-		entryBlock.config(insertbackground="#000000")
+		entryBlockFldr = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=9, highlightthickness=0, relief=FLAT)
+		entryBlockFldr.insert(0, "Class Fldr")
+		entryBlockFldr.grid(sticky=W, row=rowSub, column=0, pady=(2, 6), padx=(10, 0))
+		entryBlockFldr.config(insertbackground="#000000")
 
-		entryBlock.bind("<Button-1>", lambda event, e=entryBlock: self.entryClick(event, e))
+		entryBlockFldr.bind("<Button-1>", lambda event, e=entryBlockFldr: self.entryClick(event, e))
 
-		entryBoxOutcome = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
-		entryBoxOutcome.insert(0, "Subfolder")
-		entryBoxOutcome.grid(sticky=W, row=rowSub, column=1, pady=(2, 6), padx=(5, 0))
-		entryBoxOutcome.config(insertbackground="#000000")
+		entryBoxOutcomeFldr = Entry(subfolderFrame, bg="#ffffff", fg="#bebebe", width=10, highlightthickness=0, relief=FLAT)
+		entryBoxOutcomeFldr.insert(0, "Subfolder")
+		entryBoxOutcomeFldr.grid(sticky=W, row=rowSub, column=1, pady=(2, 6), padx=(5, 0))
+		entryBoxOutcomeFldr.config(insertbackground="#000000")
 
-		entryBoxOutcome.bind("<Button-1>", lambda event, e=entryBoxOutcome: self.entryClick(event, e))
+		entryBoxOutcomeFldr.bind("<Button-1>", lambda event, e=entryBoxOutcomeFldr: self.entryClick(event, e))
 
-		addButton = Button(subfolderFrame, text="add", command=lambda: self.addToEnv(path, entryBlock, entryBoxOutcome, canvas, bodyFrame), width=6)
+		addButton = Button(subfolderFrame, text="add", command=lambda: self.addToEnv(path, entryBlockFldr, entryBoxOutcomeFldr, canvas, bodyFrame, "", subfolderFrame, "Subfolders"), width=6)
 		addButton.grid(sticky=W, row=rowSub, column=2, pady=(0, 6), padx=(6, 0))
 
 		canvas.update_idletasks()
-		canvas.configure(scrollregion=bodyFrame.bbox("all"))"""
+		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 
 	#this needs to stay here, this will hold each function to create each frame, I just need to save them here as I create them
