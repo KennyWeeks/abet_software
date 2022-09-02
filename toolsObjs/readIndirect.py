@@ -5,6 +5,7 @@ import pandas as pd
 import os
 import sys
 import json
+import pdftotext
 
 #vals = sys.argv[1].split(",")
 #vals = [v.strip() for v in vals]
@@ -26,246 +27,144 @@ class ReadIndirect:
 	#this is the terminal
 	__terminal = None
 
+	__questions = ["The material was presented clearly.", 
+"Instructor was genuinely interested in educating the students.", 
+"The assignments, quizzes, and tests were fair and covered the material emphasized.",
+"Instructor was well prepared in class meetings.", 
+"Instructor was available to answer questions.", 
+"Instructor covered the material listed in the syllabus.", 
+"Instructor's overall performance in this course was excellent.", 
+"Ranking Summary"]
+
 	def __init__(self, indirectFolder, saveDirectory, name, terminal):
 		self.__indirectFolder = indirectFolder
 		self.__saveDirectory = saveDirectory
 		self.__name = name
 		self.__terminal = terminal
 
-	def startTool(self):
-		files = os.listdir(self.__indirectFolder)
+	def readTool(self):
 
-		for f in files:
-			if f != ".DS_Store":
-				self.__terminal.enterLine("Working on " + f)
-				self.__terminal.idle_task()
-				clss, sec, text = self.openReadPDF(self.__indirectFolder, f) #open and read the file
-				allPer, stringWithPercentage = self.findPossiblePercentages(text) #find all possible percentages, and where the total student information is kept
-				sentences = self.findTheData(text) #find the sentence data where the results are stored
+		totalData = list()
 
-				evaluated, categories = self.parseData(sentences) #find how many students have been evaluated, and how many the pared data
-
-				#Find the total number of students
-				total = ''
-				i = len(allPer)
-				correctPercentage = -1
-				while i > 0:
-					i -= 1
-
-					#the string returned is where this data is stored
-					if stringWithPercentage.find(evaluated+allPer[i]) != -1:
-						total = stringWithPercentage[0:stringWithPercentage.find(evaluated+allPer[i])]
-						correctPercentage = i #save the index of the correct percentage
-						break
-
-				if total == '':
-					i = len(allPer)
-					while i > 0:
-						i -= 1
-
-						if float(allPer[i]) <= 0.0:
-							continue
-
-						genTotal = 100. * float(evaluated) / float(allPer[i])
-
-						generatedString = str(int(genTotal)) + str(evaluated) + str(allPer[i])
-
-						if stringWithPercentage == generatedString:
-							total = genTotal
-
-				if total == '':
-					self.__terminal.enterLine("--------------------")
-					self.__terminal.enterLine("There is a problem with the file " + f)
-					self.__terminal.enterLine("--------------------")
+		for files in os.listdir(self.__indirectFolder):
+			individualData = list()
+			with open(self.__indirectFolder + "/" + files, "rb") as f:
+				try:
+					pdf = pdftotext.PDF(f)
+				except:
+					print("Broke at this file " + files)
 					continue
 
-				if len(total) > 2:
-					i = int(len(total) / 2)
-					correct = False
-					while i < len(total):
-						tempTotal = total[0:i]
-						val = total[i:]
-						if str(float(int(val) / int(tempTotal) * 100)) == allPer[correctPercentage]:
-							correct == True
+				self.__terminal.enterLine("Reading this file --> " + files)
+				self.__terminal.idle_task()
+
+				numOne = pdf[0].find("Course Audience:") + len("Course Audience:")
+				numTwo = pdf[0].find("Responses Received:")
+				total = pdf[0][numOne:numTwo].strip()
+
+				numOne = pdf[0].find("Responses Received:") + len("Responses Received:")
+				numTwo = pdf[0].find("Response Ratio:")
+				number = pdf[0][numOne:numTwo].strip()
+
+				for line in pdf[0].split(" "):
+					if line.find("-") != -1:
+						className = line.split("-")[0]
+						section = line.split("-")[1]
+
+						if int(className) >= 600:
+							className = str(int(className) - 200)
+
+						individualData.append("CS" + className)
+						individualData.append(section)
+						break
+
+				individualData.append(total)
+				individualData.append(number)
+				individualData.append(7*int(number))
+
+				values = dict()
+				ind = 1
+				for index in range(0, 7):
+					startPos = pdf[ind].find(self.__questions[index]) + len(self.__questions[index])
+					endPos = pdf[ind].find(self.__questions[index+1])
+					#print(endPos)
+
+					string = ""
+					add = False
+					count = 0
+
+					for line in pdf[ind][startPos:endPos].split("\n"):
+						#print(ind)
+						if line.strip().find("%") != -1:
+							count += 1
+
+						if count == 6:
+							add = False
+
+						string += line + " "
+
+					percents = []
+					per = 0
+
+					for vals in string.split(" "):
+						if vals.find("%") != -1:
+							percents.append(vals)
+							per += 1
+						if per == 6:
 							break
-						i+=1
 
-					if not correct:
-						self.__terminal.enterLine("--------------------")
-						self.__terminal.enterLine("There is a problem with the file " + f)
-						self.__terminal.enterLine("--------------------")
-						continue
+					values[self.__questions[index]] = percents
 
+					if endPos == -1:
+						ind += 1
 
-				numerical = self.numericalData(evaluated, categories)
+				totalSum = [0, 0, 0, 0, 0, 0]
 
-				self.__data.append(["CS"+clss, int(sec), total, evaluated, 7*int(evaluated)])
+				for keys in values.keys():
+					#print(keys + str(values[keys]))
+					numerical = []
+					for per in values[keys]:
+						perc = int(float(per[:-1]))
+						num = float(number) * perc / 100.
+						numerical.append(float("{:.0f}".format(num)))
 
-				sums = [numerical[k][1] for k in numerical]
-				for sms in sums:
-					for v in sms:
-						sms[sms.index(v)] = float('{:.0f}'.format(v))
-						
-				s = sums[0]
-				for i in range(1, len(sums)):
-					res = list()
-					for i1, i2 in zip(s, sums[i]):
-						#sti1 = '{:.0f}'.format(i1)
-						#sti2 = '{:.0f}'.format(i2)
-						res.append(i1+i2)
+					if len(numerical) == 0:
+						break
+					#print(numerical)
+					#print(sum(numerical))
+					for i in range(len(numerical)):
+						totalSum[i] += numerical[i]
 
-						s = res
+				totalSum = [float("{:.0f}".format(sm)) for sm in totalSum]
+				#print("This is the total")
+				#print(totalSum)
+				for vals in totalSum:
+					individualData.append(vals)
 
-				for i in s:
-					self.__data[-1].append('{:.2f}'.format(i))
+				individualData.append(totalSum[0] + totalSum[1])
+				#print(sum(totalSum))
 
+				#this is the weighted average
 				#Find a weighted average
 				average = 0
 				v = 5
-				for i in s:
+				for i in totalSum:
 					average += v*float(i)
 					v-=1
 
-				average /= 7*int(evaluated)
+				average /= 7*int(number)
 
-				self.__data[-1].append(s[0]+s[1])
-				self.__data[-1].append('{:.2f}'.format(average))
+				individualData.append("{:.2f}".format(average))
 
-		df = pd.DataFrame(self.__data, columns=self.__header)
+				totalData.append(individualData)
+
+		self.writeData(totalData)
+
+   
+	def writeData(self, table):
+		self.__terminal.enterLine("Writing the data into the final .csv file")
+		self.__terminal.idle_task()
+		df = pd.DataFrame(table, columns=self.__header)
 		df = df.sort_values(by=['Class', 'Section'])
 
-
 		df.to_csv(self.__saveDirectory + "/" + self.__name + ".csv")
-		self.__terminal.enterLine("Done")
-
-				#c+=1
-				#print("Completed ", c, "file")
-
-
-
-	def openReadPDF(self, loc, file):
-		text = textract.process(loc + "/" + file, method="pdfminer", encoding="ascii")
-
-		#-------------------------------
-		#Find the class that this is for
-		#-------------------------------
-		dashInd = str(text).find("-")
-
-		clss = str(text)[dashInd-3:dashInd]
-		if int(clss) >= 600:
-			temp = int(clss) - 200
-			clss = str(temp)
-		sec = str(text)[dashInd+1:dashInd+5]
-
-		return clss, sec, text
-
-	def findPossiblePercentages(self, text):
-		#the percentage value begins befor this string, this is the percentage symbol %
-		per = str(text).find("Creation Date") - 1 
-		cdi = per #this value will index backwards to the decimal point
-		decimalStr = '' #this will hold the decimal value
-
-		while(str(text)[cdi] != '.'):
-			cdi -= 1
-
-		decimalStr = str(text)[cdi:per] #save the values after the decimal point
-		allPercentages = list() #now we create a list of the possible percentages writtens
-		tens = cdi #this will count down the tens
-		c = 0 #don't go over 3 digits in the whole numbers places
-
-		while c < 4:
-			#print(str(text)[tens:per])
-			if float(str(text)[tens:cdi] + decimalStr) <= 100.0:
-				allPercentages.append(str(text)[tens:cdi] + decimalStr)
-			tens -= 1
-			c+= 1
-
-		boundary = str(text).find("Course Evaluations")
-		checkPer = str(text)[boundary+len("Course Evaluations"):per] #this is the boundary of where the percentage and the total students are
-
-		return allPercentages, checkPer
-
-	def findTheData(self, text):
-		categories = {"The material was presented clearly":[], 
-		"Instructor was genuinely interested in educating the students.": [],
-		"The assignments, quizzes, and tests were fair and covered the material emphasized.":[], 
-		"Instructor was well prepared in class meetings.": [],
-		"Instructor was available to answer questions.": [],
-		"Instructor covered the material listed in the syllabus.": [], 
-		"overall performance in this course was excellent.": []}
-
-		#I want the find the data for the different questions (labeled categories here)
-		#this is don't by just getting the keys of the dictionary above
-		findSentences = list(categories.keys())
-		findSentences.append("Ranking Summary")
-
-		#This will be the data for each question, they are saved a sentences
-		sentences = list()
-
-		#This is finding where the data is for each question
-		for i in range(len(findSentences)):
-			if i != 7:
-				s = str(text).find(findSentences[i]) #the data we need is between this first question
-				e = str(text).find(findSentences[i+1]) #and this next question
-				q = str(text)[s:e] #this will grab the sentence of data
-
-				data = q[q.find("Overall") + len("Overal"): q.find("Dept")] #simplify the search, cause we only need a section of it
-				sentences.append(data)
-
-		return sentences
-
-	def parseData(self, sentences):
-		evaluated = '' #this is the number of students evaluated
-
-		categories = {"The material was presented clearly":[], 
-		"Instructor was genuinely interested in educating the students.": [],
-		"The assignments, quizzes, and tests were fair and covered the material emphasized.":[], 
-		"Instructor was well prepared in class meetings.": [],
-		"Instructor was available to answer questions.": [],
-		"Instructor covered the material listed in the syllabus.": [], 
-		"overall performance in this course was excellent.": []}
-
-		findSentences = list(categories.keys())
-
-		#Start looking through the sentences
-		for s in range(0, len(sentences)):
-			substr = "%"
-			pos = [_.start() for _ in re.finditer(substr, sentences[s])]
-			perc = list() #This is the percentage list
-			sumSoFar = 0.
-			for i in range(0, len(pos)-1):
-				perc.append(float(sentences[s][pos[i]:pos[i+1]][1:]))
-				sumSoFar += perc[-1]
-
-			remaining = 100.-sumSoFar #this is the percentage we haven't found so far
-			if remaining < 0:
-				perc.insert(0, "0.00")
-			else:
-				perc.insert(0, "{:.2f}".format(remaining))
-
-			#This is how we find how many students actuall took the class
-			strng = perc[0]
-
-			j = pos[0] - len(strng)
-			evaluated = sentences[s][1:j]
-
-			categories[findSentences[s]] = perc
-
-		return evaluated, categories
-
-	def numericalData(self, evaluated, categories):
-
-		for k in categories.keys():
-			ls = categories[k]
-			categories[k]=list()
-			numerical = list()
-			for p in ls:
-				numerical.append(float(p)*float(evaluated)/100.)
-
-			#append both lists to the questions definition
-			categories[k].append(ls)
-			categories[k].append(numerical)
-
-		return categories
-
-

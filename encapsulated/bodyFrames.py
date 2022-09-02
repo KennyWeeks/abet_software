@@ -189,7 +189,7 @@ class BodyFrame(ActionMethods):
 		if startTool:
 			self.__terminal.enterLine("Starting the tool ... ")
 			readInd = ReadIndirect(args[0], args[1], args[2], self.__terminal)
-			readInd.startTool()
+			readInd.readTool()
 		else:
 			self.__terminal.enterLine("Tool will not start.")
 
@@ -537,7 +537,7 @@ class BodyFrame(ActionMethods):
 		#this will select the destination of the final create email file
 		------------------------"""
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		destinationOfResutlingFile.insert('1.0', "--> Select the destination of final email file (emailFile.csv) created by the tool.")
+		destinationOfResutlingFile.insert('1.0', "++ Select the destination of final email file (emailFile.csv) created by the tool.")
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
 
@@ -556,7 +556,7 @@ class BodyFrame(ActionMethods):
 		This seciton will start the tool
 		------------------------"""
 		startTool = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		startTool.insert('1.0', "--> Press the button below to start the tool.")
+		startTool.insert('1.0', "++ Press the button below to start the tool.")
 		startTool.config(state=DISABLED)
 		startTool.grid(sticky=W, row=15, column=0, padx=(10, 0), pady=(2, 2))
 
@@ -589,7 +589,7 @@ class BodyFrame(ActionMethods):
 		#start by giving user options to pick the file
 		#this will prompt the user to select the file that lists the available classes
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "--> Select the schedule file (.xlsx or .csv) that lists the current semesters schedule.")
+		selectFileDesc.insert('1.0', "++ Select the schedule file (.xlsx or .csv) that lists the current semesters schedule.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=2, column=0, padx=(10, 0), pady=(10, 2))
 
@@ -609,26 +609,26 @@ class BodyFrame(ActionMethods):
 
 		#this is wherre the headers of the file will be displayed
 		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=5, wrap=WORD, highlightthickness=0)
-		selectedFileHeaderDesc.insert('1.0', "--> The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Class Number, Class Section]")
+		selectedFileHeaderDesc.insert('1.0', "++ The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Class Number, Class Section]")
 		selectedFileHeaderDesc.config(state=DISABLED)
 		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(0, 2))
 
-		scheduleFrame.grid(sticky=W, row=6, column=0, padx=10)
+		scheduleFrame.grid(sticky=W, row=6, column=0, padx=(7, 0))
 
 		#add label to the frame
 		noCheckBox = Label(scheduleFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
 		noCheckBox.grid(sticky=W, row=0, column=0)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=7, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=7, column=0, pady=(0, 2))
 
 		"""--------------------------
 		#This will allow the users to name the abet cabinet that is used for the semester
 		------------------------"""
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		entryDesc.insert('1.0', "--> Enter the name of the folder that will be used for the cabinet")
+		entryDesc.insert('1.0', "++ Enter the name of the folder that will be used for the cabinet")
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(2, 2))
 
@@ -638,17 +638,17 @@ class BodyFrame(ActionMethods):
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
-
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=10, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=10, column=0, pady=(0, 2))
 
 		"""----------------------------
 		#this will select the destination of the associated email file
 		----------------------------"""
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		destinationOfResutlingFile.insert('1.0', "--> Select the destination for ABET Cabinet created by the tool.")
+		destinationOfResutlingFile.insert('1.0', "++ Select the destination for ABET Cabinet created by the tool.")
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
 
@@ -658,16 +658,16 @@ class BodyFrame(ActionMethods):
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
 		destinationLabel.grid(sticky=W, row=13, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=14, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=14, column=0, pady=(0, 2))
 		
 		"""----------------------------
 		This section will start the associated tool
 		----------------------------"""
 		startTool = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		startTool.insert('1.0', "--> Press the button below to start the tool.")
+		startTool.insert('1.0', "++ Press the button below to start the tool.")
 		startTool.config(state=DISABLED)
 		startTool.grid(sticky=W, row=15, column=0, padx=(10, 0), pady=(2, 2))
 
@@ -698,7 +698,7 @@ class BodyFrame(ActionMethods):
 		the user for action
 		------------------------"""
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the file that holds the exit interview results.")
+		selectFolderDesc.insert('1.0', "++ Select the file that holds the exit interview results.")
 		selectFolderDesc.config(state=DISABLED)
 		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
@@ -709,15 +709,15 @@ class BodyFrame(ActionMethods):
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="auditCabinet")
 		selectedFolderName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
 
 		"""------------------------
 		This will determine what is search by the audit tool, as well as how that final data will be stored
 		------------------------"""
-		selectParamsForAudit = Label(bodyFrame, text="--> Before you start the audit, you can select which subfolder the program will audit, as well as how much of each subfolder is filled.", bg="#323232", fg="#ffffff", wraplength=300, justify=LEFT)
+		selectParamsForAudit = Label(bodyFrame, text="++ Before you start the audit, you can select which subfolder the program will audit, as well as how much of each subfolder is filled.", bg="#323232", fg="#ffffff", wraplength=300, justify=LEFT)
 		selectParamsForAudit.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(2, 2))
 
 		titleRadio = Label(bodyFrame, text="--> Select which subfolder to audit", bg="#323232", fg="#ffffff", justify=LEFT)
@@ -743,15 +743,14 @@ class BodyFrame(ActionMethods):
 		outCheckBox = Radiobutton(bodyFrame, text="Audit only Outcome", variable=self.retRadio(), value=6, command=lambda: self.changeRadio(6))
 		outCheckBox.grid(sticky=W, row=12, column=0, padx=5, pady=5)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=13, column=0, padx=10)
-
+		dividingLabel.grid(sticky=W, row=13, column=0, pady=(0, 2))
 		"""------------------------
 		This will determine how the final data will be parsed and stored
 		------------------------"""
-		outputCheckBoxes = Label(bodyFrame, text="-- Select how the audit works --", bg="#323232", fg="#ffffff", justify=LEFT)
+		outputCheckBoxes = Label(bodyFrame, text="++ Select how the audit works ", bg="#323232", fg="#ffffff", justify=LEFT)
 		outputCheckBoxes.grid(sticky=W, row=14, column=0, padx=5)
 
 		countEmptyV = IntVar()
@@ -767,16 +766,16 @@ class BodyFrame(ActionMethods):
 		emailAudit = Checkbutton(bodyFrame, text="Email Audit", variable=emailAuditV, onvalue=1, offvalue=0)
 		emailAudit.grid(sticky=W, row=17, column=0, pady=5, padx=5)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=18, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=18, column=0, pady=(0, 2))
 
 		"""------------------------
 		This section will allow the user to name audit file
 		------------------------"""
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		entryDesc.insert('1.0', "--> Enter the name of the file for that holds the parsed data. (*.csv)")
+		entryDesc.insert('1.0', "++ Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=19, column=0, padx=10, pady=(2, 2))
 
@@ -787,15 +786,15 @@ class BodyFrame(ActionMethods):
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=21, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=21, column=0, pady=(0, 2))
 
 		"""------------------------
 		This section will allow the user to select the destination of the audit data
 		------------------------"""
-		selectSaveDir = Label(bodyFrame, text="--> Select the directory to save the audit", bg="#323232", fg="#ffffff")
+		selectSaveDir = Label(bodyFrame, text="++ Select the directory to save the audit", bg="#323232", fg="#ffffff")
 		selectSaveDir.grid(sticky=W, row=22, column=0, padx=5, pady=(2,2))
 
 		#this will prompt the user to select a file to use for this part of the tool
@@ -805,16 +804,16 @@ class BodyFrame(ActionMethods):
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="saveDir")
 		selectedFolderName.grid(sticky=W, row=24, column=0, padx=7, pady=(0,2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=25, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=25, column=0, pady=(0, 2))
 
 		"""------------------------
 		This section will allow the user to select the email file
 		------------------------"""
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "--> Select the file that holds the indirect assessment data.")
+		selectFileDesc.insert('1.0', "++ Select the file that holds the indirect assessment data.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=26, column=0, padx=10, pady=(2,2))
 
@@ -825,16 +824,16 @@ class BodyFrame(ActionMethods):
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="emlist")
 		selectedFileName.grid(sticky=W, row=28, column=0, padx=7, pady=(0,2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=29, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=29, column=0, pady=(0, 2))
 
 		"""------------------------
 		This section will allow the user to select the destination of the audit data
 		------------------------"""
 
-		startAudit = Label(bodyFrame, text="--> Start the audit", bg="#323232", fg="#ffffff")
+		startAudit = Label(bodyFrame, text="++ Start the audit", bg="#323232", fg="#ffffff")
 		startAudit.grid(sticky=W, row=30, column=0, padx=10, pady=(2,2))
 
 		path = self.get_file_path()
@@ -870,7 +869,7 @@ class BodyFrame(ActionMethods):
 		the user for action
 		------------------------"""
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the most recent ABET Cabinet directory.")
+		selectFolderDesc.insert('1.0', "++ Select the most recent ABET Cabinet directory.")
 		selectFolderDesc.config(state=DISABLED)
 		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
@@ -881,13 +880,13 @@ class BodyFrame(ActionMethods):
 		indirectFolderLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="directCabinet")
 		indirectFolderLabel.grid(sticky=W, row=3, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
 
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the directory to save the direct assessment data.")
+		selectFolderDesc.insert('1.0', "++ Select the directory to save the direct assessment data.")
 		selectFolderDesc.config(state=DISABLED)
 		selectFolderDesc.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(2,2))
 
@@ -898,16 +897,16 @@ class BodyFrame(ActionMethods):
 		selectedFolderName = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDir")
 		selectedFolderName.grid(sticky=W, row=7, column=0, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=8, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=8, column=0, pady=(0, 2))
 
 		#---------------------------
 		#this is where the user will select with folder to search for the outcome
 
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select which folder you would like to parse for the outcome data.")
+		selectFolderDesc.insert('1.0', "++ Select which folder you would like to parse for the outcome data.")
 		selectFolderDesc.config(state=DISABLED)
 		selectFolderDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2, 2))
 
@@ -933,17 +932,17 @@ class BodyFrame(ActionMethods):
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=11, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=11, column=0, pady=(0, 2))
 
 		#---------------------------
 
 		#---------------------------
 		#this is the entry area
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		entryDesc.insert('1.0', "--> Enter the name of the file for that holds the parsed data. (*.csv)")
+		entryDesc.insert('1.0', "++ Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=12, column=0, padx=10, pady=(2, 2))
 
@@ -957,10 +956,10 @@ class BodyFrame(ActionMethods):
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=14, column=0, padx=10, pady=(2, 0))
+		dividingLabel.grid(sticky=W, row=14, column=0, pady=(0, 2))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
@@ -970,7 +969,7 @@ class BodyFrame(ActionMethods):
 
 		#Start the tool now
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
+		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
 		startToolDesc.grid(sticky=W, row=15, column=0, padx=10, pady=(2, 2))
 
@@ -999,7 +998,7 @@ class BodyFrame(ActionMethods):
 		the user for action
 		------------------------"""
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "--> Select the file that holds the exit interview results.")
+		selectFileDesc.insert('1.0', "++ Select the file that holds the exit interview results.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
@@ -1015,7 +1014,7 @@ class BodyFrame(ActionMethods):
 
 		#this is wherre the headers of the file will be displayed
 		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
-		selectedFileHeaderDesc.insert('1.0', "--> The header columns of the selected file will be displayed. Select the columns to be used by the tool.")
+		selectedFileHeaderDesc.insert('1.0', "++ The header columns of the selected file will be displayed. Select the columns to be used by the tool.")
 		selectedFileHeaderDesc.config(state=DISABLED)
 		selectedFileHeaderDesc.grid(sticky=W, row=4, column=0, padx=10, pady=(0,2))
 
@@ -1025,14 +1024,14 @@ class BodyFrame(ActionMethods):
 		noCheckBox = Label(exitFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
 		noCheckBox.grid(sticky=W, row=0, column=0)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=6, column=0, padx=10, pady=(2, 0))
+		dividingLabel.grid(sticky=W, row=6, column=0, pady=(0, 2))
 
 		#this is the entry area
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		entryDesc.insert('1.0', "--> Enter the name of the file for the parsed exit interview data.")
+		entryDesc.insert('1.0', "++ Enter the name of the file for the parsed exit interview data.")
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=7, column=0, padx=10, pady=(2, 2))
 
@@ -1043,16 +1042,16 @@ class BodyFrame(ActionMethods):
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=9, column=0, padx=10, pady=(2, 0))
+		dividingLabel.grid(sticky=W, row=9, column=0, pady=(0, 2))
 
 		#----------------------------
 		#this will select the destination of the associated email file
 
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		destinationOfResutlingFile.insert('1.0', "--> Select the destination of the final parsed exit interview here.")
+		destinationOfResutlingFile.insert('1.0', "++ Select the destination of the final parsed exit interview here.")
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=10, column=0, padx=10, pady=5)
 
@@ -1062,15 +1061,15 @@ class BodyFrame(ActionMethods):
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
 		destinationLabel.grid(sticky=W, row=12, padx=7)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=13, column=0, padx=10, pady=(2, 0))
+		dividingLabel.grid(sticky=W, row=13, column=0, pady=(0, 2))
 		#----------------------------
 
 		#Start the tool now
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
+		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
 		startToolDesc.grid(sticky=W, row=14, column=0, padx=10, pady=(2,2))
 
@@ -1100,7 +1099,7 @@ class BodyFrame(ActionMethods):
 		------------------------"""	
 		#This section will allow the user to pick the folder that is holding the direct assessment files
 		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFolderDesc.insert('1.0', "--> Select the directory where the indirect assessment is stored.")
+		selectFolderDesc.insert('1.0', "++ Select the directory where the indirect assessment is stored.")
 		selectFolderDesc.config(state=DISABLED)
 		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=(10, 0), pady=(10, 2))
 
@@ -1111,16 +1110,16 @@ class BodyFrame(ActionMethods):
 		indirectFolderLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="indirectFolder")
 		indirectFolderLabel.grid(sticky=W, row=3, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
 
 		"""------------------------
 		#this will select the destination of the associated parsed file
 		------------------------"""
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		destinationOfResutlingFile.insert('1.0', "--> Select the destination of the final parsed data from the indirect assessment here.")
+		destinationOfResutlingFile.insert('1.0', "++ Select the destination of the final parsed data from the indirect assessment here.")
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=10, pady=(2, 2))
 
@@ -1130,16 +1129,16 @@ class BodyFrame(ActionMethods):
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
 		destinationLabel.grid(sticky=W, row=7, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=8, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=8, column=0, pady=(0, 2))
 
 		"""------------------------
 		#This will allow the users to name the indirect results file
 		------------------------"""
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		entryDesc.insert('1.0', "--> Enter the name of the file for that holds the parsed data. (*.csv)")
+		entryDesc.insert('1.0', "++ Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2, 2))
 
@@ -1150,16 +1149,16 @@ class BodyFrame(ActionMethods):
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=11, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=11, column=0, pady=(0, 2))
 
 		"""------------------------
 		#Start the tool now
 		------------------------"""
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
+		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
 		startToolDesc.grid(sticky=W, row=12, column=0, padx=10, pady=(2,2))
 
@@ -1188,7 +1187,7 @@ class BodyFrame(ActionMethods):
 		the user for action
 		------------------------"""	
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "--> Select the file that holds the indirect assessment data.")
+		selectFileDesc.insert('1.0', "++ Select the file that holds the indirect assessment data.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
@@ -1199,16 +1198,16 @@ class BodyFrame(ActionMethods):
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="indirectAssessment")
 		selectedFileName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
 
 		#----------------------
 		#this is the save destination
 
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		destinationOfResutlingFile.insert('1.0', "--> Select the destination of the further parsed data.")
+		destinationOfResutlingFile.insert('1.0', "++ Select the destination of the further parsed data.")
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=10, pady=(2, 2))
 
@@ -1218,17 +1217,17 @@ class BodyFrame(ActionMethods):
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
 		destinationLabel.grid(sticky=W, row=7, padx=(7, 0), pady=(0, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=8, column=0, padx=10)
+		dividingLabel.grid(sticky=W, row=8, column=0, pady=(0, 2))
 
 		#-----------------------
 		#this will start the tool
 
 		#Start the tool now
 		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		startToolDesc.insert('1.0', "--> Start the tool by pressing the button below.")
+		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
 		startToolDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2,2))
 
@@ -1266,14 +1265,14 @@ class BodyFrame(ActionMethods):
 		------------------------"""
 		#this is the intro text block telling the user what they can do with this section
 		introLabel = Text(bodyFrame, bg="#323232", width=40, height=4, wrap=WORD, highlightthickness=0)
-		introLabel.insert('1.0', "--> This section will allow you to define what classes, subfolders, and outcomes the tool will generate and use to parse the data correctly.")
+		introLabel.insert('1.0', "++ This section will allow you to define what classes, subfolders, and outcomes the tool will generate and use to parse the data correctly.")
 		introLabel.config(state=DISABLED)
 		introLabel.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=2, column=0, padx=10, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=2, column=0, pady=(0, 2))
 
 		"""------------------------
 		This will allow the users the ability to change the classes and their outcomes
@@ -1359,25 +1358,17 @@ class BodyFrame(ActionMethods):
 
 		row += 1
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=row, column=0, padx=10, pady=0)
-
+		dividingLabel.grid(sticky=W, row=row, column=0, pady=(0, 2))
 		row += 1
 
 		#this is the intro text block telling the user what they can do with this section
 		introLabel = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		introLabel.insert('1.0', "--> This section will allow you to define what subfolders are generated when the cabinet is created")
+		introLabel.insert('1.0', "++ This section will allow you to define what subfolders are generated when the cabinet is created")
 		introLabel.config(state=DISABLED)
 		introLabel.grid(sticky=W, row=row, column=0, padx=10, pady=(0, 2))
-
-		row += 1
-
-		dividingLabel = Text(bodyFrame, bg="#323232", width=40, height=1, wrap=WORD, highlightthickness=0)
-		dividingLabel.insert('1.0', "----------------------------------------")
-		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=row, column=0, padx=10, pady=(0, 2))
 
 		row += 1
 
