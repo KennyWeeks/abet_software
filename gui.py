@@ -1,17 +1,3 @@
-"""from guiClass import Application
-
-app = Application()
-
-#app.placeTerminal()
-
-app.makeTitle()
-
-app.placeBodyFrames()
-
-app.placeMenu()
-
-app.display()"""
-
 from encapsulated.guiClass import Application
 import os
 
