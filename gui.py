@@ -7,10 +7,10 @@ app = Application()
 #this will make the titlebar, which holds the settings, 
 #and informs the user what tool is being used
  
-"""app.makeTitle()
+app.makeTitle()
 
-app.createBody()
+"""app.createBody()"""
 
-app.placeMenu()"""
+app.placeMenu()
 
 app.display()

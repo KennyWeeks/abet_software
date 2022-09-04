@@ -3,6 +3,7 @@ from tkinter import Text
 from tkinter import filedialog as fd
 #from PIL import Image, ImageTk, ImageDraw
 import re
+from encapsulated.menuBar import MenuBar
 """from encapsulated.menuBar import MenuBar
 from encapsulated.bodyFrames import BodyFrame
 import sys
@@ -30,7 +31,7 @@ class Application:
 	#--------------------------------
 	#these are the methods that will be called by the class during creation
 	def __init__(self):
-		self.__root.geometry("500x400") #declare the geometry for the application
+		self.__root.geometry("500x380") #declare the geometry for the application
 		self.__root.title("")
 		self.__root.config(bg="#323232")
 		self.__root.resizable(0, 0)

@@ -1,6 +1,6 @@
 from tkinter import *
-from PIL import Image, ImageTk, ImageDraw
-from encapsulated.imageClass import TitleButtons
+#from PIL import Image, ImageTk, ImageDraw
+#from encapsulated.imageClass import TitleButtons
 
 class MenuBar:
 
