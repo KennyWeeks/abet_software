@@ -1,12 +1,12 @@
 from tkinter import *
 from tkinter import Text
 from tkinter import filedialog as fd
-from PIL import Image, ImageTk, ImageDraw
+#from PIL import Image, ImageTk, ImageDraw
 import re
-from encapsulated.menuBar import MenuBar
+"""from encapsulated.menuBar import MenuBar
 from encapsulated.bodyFrames import BodyFrame
 import sys
-from encapsulated.imageClass import TitleButtons
+from encapsulated.imageClass import TitleButtons"""
 """from menuBar import Menu
 from testBox import LiveTerminal
 from bodyFrames import BodyFrame"""
@@ -32,6 +32,7 @@ class Application:
 	def __init__(self):
 		self.__root.geometry("500x400") #declare the geometry for the application
 		self.__root.title("")
+		self.__root.config(bg="#323232")
 		self.__root.resizable(0, 0)
 		#photo = PhotoImage(file="imgs/logo_3.png")
 		#self.__root.iconphoto(False, photo)
