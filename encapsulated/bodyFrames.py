@@ -6,7 +6,7 @@ from tkinter import ttk
 import re
 import pandas as pd
 from toolsObjs.exitInt import ExitInt
-from toolsObjs.readIndirect import ReadIndirect
+#from toolsObjs.readIndirect import ReadIndirect
 from toolsObjs.parseIndirect import ParseIndirect
 from toolsObjs.parseDirect import ParseDirect
 from dotenv import load_dotenv
@@ -187,9 +187,10 @@ class BodyFrame(ActionMethods):
 			args.append(e.get().strip())
 
 		if startTool:
-			self.__terminal.enterLine("Starting the tool ... ")
-			readInd = ReadIndirect(args[0], args[1], args[2], self.__terminal)
-			readInd.readTool()
+			self.__terminal.enterLine("Works")
+			#self.__terminal.enterLine("Starting the tool ... ")
+			#readInd = ReadIndirect(args[0], args[1], args[2], self.__terminal)
+			#readInd.readTool()
 		else:
 			self.__terminal.enterLine("Tool will not start.")
 
@@ -401,26 +402,20 @@ class BodyFrame(ActionMethods):
 	#every single frame. This will allow the application to scroll, and keep it overall compact
 	#--------------
 	def createScrollFrame(self):
-		"""------------------------
-		This section is kinda a hack, it will allow the user to scroll through the application
-		because tkinter doesn't have a dedicated scrolling options, and I would like to keep the 
-		design as compact as possible
-		------------------------"""
-
 		#this canvas will hold the scrollbar, as well as the frame that will grow with the scrollbar
-		canvas = Canvas(self.__styleFrame, highlightthickness=0)
-		canvas.pack(side=LEFT, fill=BOTH, expand=1)
+		canvas = Canvas(self.__styleFrame, highlightthickness=0, bg="#323232", width=300)
+		canvas.pack(side=LEFT, expand=1)
 
 		#this is the scrollbar associated with the canvas
 		scrollBar = ttk.Scrollbar(self.__styleFrame, orient=VERTICAL, command=canvas.yview)
-		scrollBar.pack(side=RIGHT, fill=Y)
+		scrollBar.pack(side=LEFT, fill=Y)
 
 		#this sets the scrollbar to work with the canvas
 		canvas.configure(yscrollcommand=scrollBar.set)
 		canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
 		#this is the bodyframe that will hold content of the application
-		bodyFrame = Frame(canvas)
+		bodyFrame = Frame(canvas, bg="#323232")
 
 		#this is like creating a window inside the canvas, that will grow, almost drawing the 
 		#tool as it expands
@@ -428,7 +423,7 @@ class BodyFrame(ActionMethods):
 
 		return bodyFrame, canvas
 
-	#1) EMAIL LIST
+	#1) EMAIL 
 	def EmailList(self):
 		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 		self.__terminal.enterLine("- Progess terminal for Parsing Email List-->")
@@ -447,53 +442,53 @@ class BodyFrame(ActionMethods):
 		the user for action
 		------------------------"""
 		#this will prompt the user to select the file that lists the available classes
-		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
+		selectFileDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=3, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "++ Select the schedule file (.xlsx or .csv) that lists the current semesters schedule.")
 		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=2, column=0, padx=(10, 0), pady=(10, 2))
+		selectFileDesc.grid(sticky=W, row=2, column=0, padx=(5, 0), pady=(10, 2))
 
 		"""--------------------------
 		#These are the frames that will be used to select a file, and if the file is a .csv or .xlsx file, it will display
 		#the header information
 		------------------------"""
 		#this is for later, this just needs to be defined here
-		scheduleFrame = Frame(bodyFrame, width=330, name="scFm") #scFm == scheduleFrame
-		dropDownFrame = Frame(bodyFrame, width=320, height=30, name="dropFrame")
+		scheduleFrame = Frame(bodyFrame, width=300, name="scFm") #scFm == scheduleFrame
+		dropDownFrame = Frame(bodyFrame, width=300, height=30, name="dropFrame")
 
 		#this will prompt the user to select a file for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, dropDownFrame))
-		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(0, 2))
+		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
-		selectedFileName.grid(sticky=W, row=4, column=0, padx=7, pady=(0, 2))
+		selectedFileName.grid(sticky=W, row=4, column=0, padx=5, pady=(2, 2))
 
 		#this is wherre the headers of the file will be displayed
-		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=5, wrap=WORD, highlightthickness=0)
+		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=6, wrap=WORD, highlightthickness=0)
 		selectedFileHeaderDesc.insert('1.0', "++ The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Professor's Name, Class Number, Class Section]")
 		selectedFileHeaderDesc.config(state=DISABLED)
-		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(0, 2))
+		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=(5, 0), pady=(0, 2))
 
-		scheduleFrame.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(0, 2))
+		scheduleFrame.grid(sticky=W, row=6, column=0, padx=(5, 0), pady=(2, 2))
 
 		#add label to the frame
-		noCheckBox = Label(scheduleFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
+		noCheckBox = Label(scheduleFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff", relief=FLAT)
 		noCheckBox.grid(sticky=W, row=0, column=0)
 		
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=7, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=7, column=0, pady=(2, 2))
 
 		"""--------------------------
 		#So this is where the headers that have been selected will be stored into a dropdown menu that will determine
 		#how the columns are used by the tool
 		------------------------""" 
-		dropDownDescription = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
+		dropDownDescription = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=3, wrap=WORD, highlightthickness=0)
 		dropDownDescription.insert('1.0', "++ When the header columns are selected, you need to choose which column will be for specific labels listed.")
 		dropDownDescription.config(state=DISABLED)
-		dropDownDescription.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(0, 2))
+		dropDownDescription.grid(sticky=W, row=8, column=0, padx=(5, 0), pady=(0, 2))
 
-		dropDownFrame.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=(2, 2))
+		"""dropDownFrame.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=(2, 2))
 
 		labelOne = Label(dropDownFrame, text="Profressor", bg="#323232", fg="#ffffff", width=11)
 		labelOne.grid(sticky=W, row=1, column=0)
@@ -526,28 +521,28 @@ class BodyFrame(ActionMethods):
 
 		dropThree = OptionMenu(dropDownFrame, self.__dropDownValues[2], *self.__dropDownOpts[2])
 		dropThree.config(width=5)
-		dropThree.grid(sticky=W, row=2, column=2)
+		dropThree.grid(sticky=W, row=2, column=2)"""
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=10, column=0, pady=(0, 2))
-		
+
 		"""--------------------------
 		#this will select the destination of the final create email file
 		------------------------"""
-		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "++ Select the destination of final email file (emailFile.csv) created by the tool.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
+		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(5, 0), pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(0, 2))
+		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=13, padx=(7, 0), pady=(0, 2))
+		destinationLabel.grid(sticky=W, row=13, padx=(5, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=14, column=0, pady=(0, 2))
@@ -555,7 +550,7 @@ class BodyFrame(ActionMethods):
 		"""--------------------------
 		This seciton will start the tool
 		------------------------"""
-		startTool = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		startTool = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		startTool.insert('1.0', "++ Press the button below to start the tool.")
 		startTool.config(state=DISABLED)
 		startTool.grid(sticky=W, row=15, column=0, padx=(10, 0), pady=(2, 2))
@@ -563,7 +558,7 @@ class BodyFrame(ActionMethods):
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d, path))
-		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
@@ -1458,7 +1453,7 @@ class BodyFrame(ActionMethods):
 
 	def __init__(self, root, current):
 		self.__root = root
-		body = Frame(root)
+		body = Frame(root, bg="#323232")
 		body.place(x=150, y=40, width=350, height=360)
 		self.__frame = body
 

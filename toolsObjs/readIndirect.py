@@ -1,11 +1,11 @@
-import textract
+#import textract
 import re
 import math
 import pandas as pd
 import os
 import sys
 import json
-import pdftotext
+"""import pdftotext
 
 #vals = sys.argv[1].split(",")
 #vals = [v.strip() for v in vals]
@@ -168,3 +168,4 @@ class ReadIndirect:
 		df = df.sort_values(by=['Class', 'Section'])
 
 		df.to_csv(self.__saveDirectory + "/" + self.__name + ".csv")
+		"""

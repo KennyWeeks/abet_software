@@ -4,6 +4,8 @@ from tkinter import filedialog as fd
 #from PIL import Image, ImageTk, ImageDraw
 import re
 from encapsulated.menuBar import MenuBar
+from encapsulated.bodyFrames import BodyFrame
+
 """from encapsulated.menuBar import MenuBar
 from encapsulated.bodyFrames import BodyFrame
 import sys

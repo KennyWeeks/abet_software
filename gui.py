@@ -9,7 +9,7 @@ app = Application()
  
 app.makeTitle()
 
-"""app.createBody()"""
+app.createBody()
 
 app.placeMenu()
 
