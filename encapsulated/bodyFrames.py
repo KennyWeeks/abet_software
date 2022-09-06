@@ -425,9 +425,9 @@ class BodyFrame(ActionMethods):
 
 	#1) EMAIL 
 	def EmailList(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine("- Progess terminal for Parsing Email List-->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("- Terminal for Parsing Email List-->")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -565,9 +565,9 @@ class BodyFrame(ActionMethods):
 
 	#2) CREATE ABET CABINET
 	def CabinetCreate(self):
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine(" Progess terminal for Cabinet Creation ")
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine(" Terminal for Cabinet Creation ")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -583,30 +583,30 @@ class BodyFrame(ActionMethods):
 		------------------------"""
 		#start by giving user options to pick the file
 		#this will prompt the user to select the file that lists the available classes
-		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
+		selectFileDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=3, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "++ Select the schedule file (.xlsx or .csv) that lists the current semesters schedule.")
 		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=2, column=0, padx=(10, 0), pady=(10, 2))
+		selectFileDesc.grid(sticky=W, row=2, column=0, padx=(5, 0), pady=(10, 2))
 
 		"""--------------------------
 		#These are the frames that will be used to select a file, and if the file is a .csv or .xlsx file, it will display
 		#the header information
 		------------------------"""
 		#this is for later, this just needs to be defined here
-		scheduleFrame = Frame(bodyFrame, width=330, name="scFm") #scFm == scheduleFrame
+		scheduleFrame = Frame(bodyFrame, width=300, name="scFm") #scFm == scheduleFrame
 
 		#this will prompt the user to select a file for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, None))
-		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(0, 2))
+		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
-		selectedFileName.grid(sticky=W, row=4, column=0, padx=7, pady=(0, 2))
+		selectedFileName.grid(sticky=W, row=4, column=0, padx=5, pady=(2, 2))
 
 		#this is wherre the headers of the file will be displayed
-		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=5, wrap=WORD, highlightthickness=0)
+		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=6, wrap=WORD, highlightthickness=0)
 		selectedFileHeaderDesc.insert('1.0', "++ The header columns of the selected file will be displayed. Select the ones to be used by the tool. Please select the columns in this order: [Class Number, Class Section]")
 		selectedFileHeaderDesc.config(state=DISABLED)
-		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(0, 2))
+		selectedFileHeaderDesc.grid(sticky=W, row=5, column=0, padx=(5, 0), pady=(0, 2))
 
 		scheduleFrame.grid(sticky=W, row=6, column=0, padx=(7, 0))
 
@@ -614,7 +614,7 @@ class BodyFrame(ActionMethods):
 		noCheckBox = Label(scheduleFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
 		noCheckBox.grid(sticky=W, row=0, column=0)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=7, column=0, pady=(0, 2))
@@ -622,19 +622,19 @@ class BodyFrame(ActionMethods):
 		"""--------------------------
 		#This will allow the users to name the abet cabinet that is used for the semester
 		------------------------"""
-		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		entryDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "++ Enter the name of the folder that will be used for the cabinet")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(2, 2))
+		entryDesc.grid(sticky=W, row=8, column=0, padx=(5, 0), pady=(2, 4))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a folder name here")
-		entryBox.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=5)
+		entryBox.grid(sticky=W, row=9, column=0, padx=(5, 0), pady=5)
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 		
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=10, column=0, pady=(0, 2))
@@ -642,18 +642,18 @@ class BodyFrame(ActionMethods):
 		"""----------------------------
 		#this will select the destination of the associated email file
 		----------------------------"""
-		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "++ Select the destination for ABET Cabinet created by the tool.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
+		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(5, 0), pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(0, 2))
+		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=13, padx=(7, 0), pady=(0, 2))
+		destinationLabel.grid(sticky=W, row=13, padx=(7, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=14, column=0, pady=(0, 2))
@@ -661,24 +661,24 @@ class BodyFrame(ActionMethods):
 		"""----------------------------
 		This section will start the associated tool
 		----------------------------"""
-		startTool = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		startTool = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		startTool.insert('1.0', "++ Press the button below to start the tool.")
 		startTool.config(state=DISABLED)
-		startTool.grid(sticky=W, row=15, column=0, padx=(10, 0), pady=(2, 2))
+		startTool.grid(sticky=W, row=15, column=0, padx=(5, 0), pady=(2, 2))
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, e=entryBox: self.createFolder(e, f, c, d, path))
-		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 	#3) AUDIT FOLDER
 	def AuditCabinet(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine("- Progess terminal for the Audit -->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("- Terminal for the Audit -->")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -692,56 +692,56 @@ class BodyFrame(ActionMethods):
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
 		------------------------"""
-		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFolderDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		selectFolderDesc.insert('1.0', "++ Select the file that holds the exit interview results.")
 		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
+		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=5, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFolderButton = Button(bodyFrame, text="Select ABET Folder to Audit", command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "auditCabinet", "0"))
-		selectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
+		selectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="auditCabinet")
-		selectedFolderName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
+		selectedFolderName.grid(sticky=W, row=3, column=0, padx=(5, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(2, 2))
 
 		"""------------------------
 		This will determine what is search by the audit tool, as well as how that final data will be stored
 		------------------------"""
 		selectParamsForAudit = Label(bodyFrame, text="++ Before you start the audit, you can select which subfolder the program will audit, as well as how much of each subfolder is filled.", bg="#323232", fg="#ffffff", wraplength=300, justify=LEFT)
-		selectParamsForAudit.grid(sticky=W, row=5, column=0, padx=(10, 0), pady=(2, 2))
+		selectParamsForAudit.grid(sticky=W, row=5, column=0, padx=(5, 0), pady=(2, 2))
 
 		titleRadio = Label(bodyFrame, text="--> Select which subfolder to audit", bg="#323232", fg="#ffffff", justify=LEFT)
-		titleRadio.grid(sticky=W, row=6, column=0, padx=(10, 0), pady=(0, 2))
+		titleRadio.grid(sticky=W, row=6, column=0, padx=(5, 0), pady=(2, 2))
 
 		#these are the radio buttons that will tell the tool what to audit
-		allCheckBox = Radiobutton(bodyFrame, text="Audit all subfolders", variable=self.retRadio(), value=1, command=lambda: self.changeRadio(1))
+		allCheckBox = Radiobutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Audit all subfolders", variable=self.retRadio(), value=1, command=lambda: self.changeRadio(1))
 		allCheckBox.select()
 		allCheckBox.grid(sticky=W, row=7, column=0, padx=5, pady=5)
 
-		sylCheckBox = Radiobutton(bodyFrame, text="Audit only Syllabus ", variable=self.retRadio(), value=2, command=lambda: self.changeRadio(2))
+		sylCheckBox = Radiobutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Audit only Syllabus ", variable=self.retRadio(), value=2, command=lambda: self.changeRadio(2))
 		sylCheckBox.grid(sticky=W, row=8, column=0, padx=5, pady=5)
 
-		handCheckBox = Radiobutton(bodyFrame, text="Audit only Handouts", variable=self.retRadio(), value=3, command=lambda: self.changeRadio(3))
+		handCheckBox = Radiobutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Audit only Handouts", variable=self.retRadio(), value=3, command=lambda: self.changeRadio(3))
 		handCheckBox.grid(sticky=W, row=9, column=0, padx=5, pady=5)
 
-		assCheckBox = Radiobutton(bodyFrame, text="Audit only Assignments", variable=self.retRadio(), value=4, command=lambda: self.changeRadio(4))
+		assCheckBox = Radiobutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Audit only Assignments", variable=self.retRadio(), value=4, command=lambda: self.changeRadio(4))
 		assCheckBox.grid(sticky=W, row=10, column=0, padx=5, pady=5)
 
-		examsCheckBox = Radiobutton(bodyFrame, text="Audit only Exams", variable=self.retRadio(), value=5, command=lambda: self.changeRadio(5))
+		examsCheckBox = Radiobutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Audit only Exams", variable=self.retRadio(), value=5, command=lambda: self.changeRadio(5))
 		examsCheckBox.grid(sticky=W, row=11, column=0, padx=5, pady=5)
 
-		outCheckBox = Radiobutton(bodyFrame, text="Audit only Outcome", variable=self.retRadio(), value=6, command=lambda: self.changeRadio(6))
+		outCheckBox = Radiobutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Audit only Outcome", variable=self.retRadio(), value=6, command=lambda: self.changeRadio(6))
 		outCheckBox.grid(sticky=W, row=12, column=0, padx=5, pady=5)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=13, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=13, column=0, pady=(2, 2))
 		"""------------------------
 		This will determine how the final data will be parsed and stored
 		------------------------"""
@@ -752,39 +752,39 @@ class BodyFrame(ActionMethods):
 		showEmptyV = IntVar()
 		emailAuditV = IntVar()
 
-		countEmpty = Checkbutton(bodyFrame, text="Count empty folders", variable=countEmptyV, onvalue=1, offvalue=0)
+		countEmpty = Checkbutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Count empty folders", variable=countEmptyV, onvalue=1, offvalue=0)
 		countEmpty.grid(sticky=W, row=15, column=0, pady=5, padx=5)
 
-		showFinalEmpty = Checkbutton(bodyFrame, text="Show empty subfolders in final audit", variable=showEmptyV, onvalue=1, offvalue=0)
+		showFinalEmpty = Checkbutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Show empty subfolders in final audit", variable=showEmptyV, onvalue=1, offvalue=0)
 		showFinalEmpty.grid(sticky=W, row=16, column=0, pady=5, padx=5)
 
-		emailAudit = Checkbutton(bodyFrame, text="Email Audit", variable=emailAuditV, onvalue=1, offvalue=0)
+		emailAudit = Checkbutton(bodyFrame, bg="#323232", fg="#ffffff", selectcolor="#ff0000", text="Email Audit", variable=emailAuditV, onvalue=1, offvalue=0)
 		emailAudit.grid(sticky=W, row=17, column=0, pady=5, padx=5)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=18, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=18, column=0, pady=(2, 2))
 
 		"""------------------------
 		This section will allow the user to name audit file
 		------------------------"""
-		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		entryDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "++ Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=19, column=0, padx=10, pady=(2, 2))
+		entryDesc.grid(sticky=W, row=19, column=0, padx=5, pady=(2, 2))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#000000", highlightthickness=0)
 		entryBox.insert(0, "Enter a folder name here")
-		entryBox.grid(sticky=W, row=20, column=0, padx=9, pady=5)
+		entryBox.grid(sticky=W, row=20, column=0, padx=5, pady=5)
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=21, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=21, column=0, pady=(2, 2))
 
 		"""------------------------
 		This section will allow the user to select the destination of the audit data
@@ -794,48 +794,47 @@ class BodyFrame(ActionMethods):
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFolderButton = Button(bodyFrame, text="Select Save Directory", command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "saveDir", "1"))
-		selectFolderButton.grid(sticky=W, row=23, column=0, padx=5, pady=(0,2))
+		selectFolderButton.grid(sticky=W, row=23, column=0, padx=7, pady=(4,2))
 
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="saveDir")
-		selectedFolderName.grid(sticky=W, row=24, column=0, padx=7, pady=(0,2))
+		selectedFolderName.grid(sticky=W, row=24, column=0, padx=5, pady=(2,2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=25, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=25, column=0, pady=(2, 2))
 
 		"""------------------------
 		This section will allow the user to select the email file
 		------------------------"""
-		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFileDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=2, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "++ Select the file that holds the indirect assessment data.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=26, column=0, padx=10, pady=(2,2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Email List", command=lambda x=165, y=65: self.getFile("emlist", "0", None, bodyFrame, canvas))
-		selectFileButton.grid(sticky=W, row=27, column=0, padx=5, pady=(0,2))
+		selectFileButton.grid(sticky=W, row=27, column=0, padx=7, pady=(4,2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="emlist")
-		selectedFileName.grid(sticky=W, row=28, column=0, padx=7, pady=(0,2))
+		selectedFileName.grid(sticky=W, row=28, column=0, padx=5, pady=(2,2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=29, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=29, column=0, pady=(2, 2))
 
 		"""------------------------
 		This section will allow the user to select the destination of the audit data
 		------------------------"""
 
 		startAudit = Label(bodyFrame, text="++ Start the audit", bg="#323232", fg="#ffffff")
-		startAudit.grid(sticky=W, row=30, column=0, padx=10, pady=(2,2))
+		startAudit.grid(sticky=W, row=30, column=0, padx=5, pady=(2,2))
 
 		path = self.get_file_path()
 
 		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, em, e, ce, se, ea, path))
-		strAuditB.grid(sticky=W, row=31, column=0, padx=7, pady=(0, 10))
-
+		strAuditB.grid(sticky=W, row=31, column=0, padx=7, pady=(2, 10))
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
@@ -976,9 +975,9 @@ class BodyFrame(ActionMethods):
 
 	#5) EXIT INTERVIEW
 	def ExitInterview(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine("- Progess terminal for Parsing Exit Int. -->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("- Terminal for Parsing Exit Int. -->")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -992,26 +991,26 @@ class BodyFrame(ActionMethods):
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
 		------------------------"""
-		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFileDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "++ Select the file that holds the exit interview results.")
 		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
+		selectFileDesc.grid(sticky=W, row=1, column=0, padx=(5, 0), pady=(10, 2))
 
 		#this is for later, this just needs to be defined here
 		exitFrame = Frame(bodyFrame, width=330, name="exFm")
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Exit Interview Results", command=lambda x=165, y=65: self.getFile("exitFileName", "0", exitFrame, bodyFrame, canvas))
-		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
+		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="exitFileName")
-		selectedFileName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
+		selectedFileName.grid(sticky=W, row=3, column=0, padx=(5, 0), pady=(2, 2))
 
 		#this is wherre the headers of the file will be displayed
-		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
+		selectedFileHeaderDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=3, wrap=WORD, highlightthickness=0)
 		selectedFileHeaderDesc.insert('1.0', "++ The header columns of the selected file will be displayed. Select the columns to be used by the tool.")
 		selectedFileHeaderDesc.config(state=DISABLED)
-		selectedFileHeaderDesc.grid(sticky=W, row=4, column=0, padx=10, pady=(0,2))
+		selectedFileHeaderDesc.grid(sticky=W, row=4, column=0, padx=5, pady=(0,2))
 
 		exitFrame.grid(sticky=W, row=5, column=0, padx=5)
 
@@ -1019,25 +1018,25 @@ class BodyFrame(ActionMethods):
 		noCheckBox = Label(exitFrame, text="+-----------> No Headers Available", bg="#323232", fg="#ffffff")
 		noCheckBox.grid(sticky=W, row=0, column=0)
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=6, column=0, pady=(0, 2))
 
 		#this is the entry area
-		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		entryDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "++ Enter the name of the file for the parsed exit interview data.")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=7, column=0, padx=10, pady=(2, 2))
+		entryDesc.grid(sticky=W, row=7, column=0, padx=5, pady=(2, 4))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a file name here")
-		entryBox.grid(sticky=W, row=8, column=0, padx=10, pady=(3,2))
+		entryBox.grid(sticky=W, row=8, column=0, padx=5, pady=5)
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=9, column=0, pady=(0, 2))
@@ -1045,40 +1044,40 @@ class BodyFrame(ActionMethods):
 		#----------------------------
 		#this will select the destination of the associated email file
 
-		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "++ Select the destination of the final parsed exit interview here.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=10, column=0, padx=10, pady=5)
+		destinationOfResutlingFile.grid(sticky=W, row=10, column=0, padx=5, pady=5)
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=11, column=0, padx=5)
+		destinationButton.grid(sticky=W, row=11, column=0, padx=7, pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=12, padx=7)
+		destinationLabel.grid(sticky=W, row=12, padx=5, pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
 		dividingLabel.grid(sticky=W, row=13, column=0, pady=(0, 2))
 		#----------------------------
 
 		#Start the tool now
-		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		startToolDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=14, column=0, padx=10, pady=(2,2))
+		startToolDesc.grid(sticky=W, row=14, column=0, padx=5, pady=(2,2))
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda :self.exitInterview(entryBox))
-		startToolButton.grid(sticky=W, row=15, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton.grid(sticky=W, row=15, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 	#6) READ INDIRECT
 	def ReadIndirect(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine("- Progess terminal to Read Indirect Reports -->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("- Terminal to Read Indirect Reports -->")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -1093,81 +1092,81 @@ class BodyFrame(ActionMethods):
 		the user for action
 		------------------------"""	
 		#This section will allow the user to pick the folder that is holding the direct assessment files
-		selectFolderDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFolderDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		selectFolderDesc.insert('1.0', "++ Select the directory where the indirect assessment is stored.")
 		selectFolderDesc.config(state=DISABLED)
-		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=(10, 0), pady=(10, 2))
+		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=(5, 0), pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		indirectFolderButton = Button(bodyFrame, text="Select Directory with Indirect Files", command=lambda:self.getFolderForGrid(bodyFrame, "indirectFolder", "0"))
-		indirectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
+		indirectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		indirectFolderLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="indirectFolder")
-		indirectFolderLabel.grid(sticky=W, row=3, padx=(7, 0), pady=(0, 2))
+		indirectFolderLabel.grid(sticky=W, row=3, padx=(5, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(2, 2))
 
 		"""------------------------
 		#this will select the destination of the associated parsed file
 		------------------------"""
-		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "++ Select the destination of the final parsed data from the indirect assessment here.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=10, pady=(2, 2))
+		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=(5, 0), pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "1"))
-		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(0, 2))
+		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=7, padx=(7, 0), pady=(0, 2))
+		destinationLabel.grid(sticky=W, row=7, padx=(5, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=8, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=8, column=0, pady=(2, 2))
 
 		"""------------------------
 		#This will allow the users to name the indirect results file
 		------------------------"""
-		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		entryDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "++ Enter the name of the file for that holds the parsed data. (*.csv)")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2, 2))
+		entryDesc.grid(sticky=W, row=9, column=0, padx=(5, 0), pady=(2, 2))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a file name here")
-		entryBox.grid(sticky=W, row=10, column=0, padx=10, pady=5)
+		entryBox.grid(sticky=W, row=10, column=0, padx=(5, 0), pady=5)
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=11, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=11, column=0, pady=(2, 2))
 
 		"""------------------------
 		#Start the tool now
 		------------------------"""
-		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		startToolDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=12, column=0, padx=10, pady=(2,2))
+		startToolDesc.grid(sticky=W, row=12, column=0, padx=5, pady=(2,2))
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.readIndirect(entryBox))
-		startToolButton.grid(sticky=W, row=13, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton.grid(sticky=W, row=13, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
 
 	#7) PARSE INDIRECT
 	def ParseIndirect(self):
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
-		self.__terminal.enterLine("- Progess terminal for Parsing Indirect Data -->")
-		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("- Terminal for Parsing Indirect Data -->")
+		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++")
 
 		"""------------------------
 		This section is kinda a hack, it will allow the user to scroll through the application
@@ -1181,55 +1180,55 @@ class BodyFrame(ActionMethods):
 		This is the actual content of the application, it is the part of the interface that will prompt
 		the user for action
 		------------------------"""	
-		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFileDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		selectFileDesc.insert('1.0', "++ Select the file that holds the indirect assessment data.")
 		selectFileDesc.config(state=DISABLED)
-		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
+		selectFileDesc.grid(sticky=W, row=1, column=0, padx=5, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
 		selectFileButton = Button(bodyFrame, text="Select Indirect Results File", command=lambda x=165, y=65: self.getFile("indirectAssessment", "0", None, bodyFrame, canvas))
-		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
+		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="indirectAssessment")
-		selectedFileName.grid(sticky=W, row=3, column=0, padx=(7, 0), pady=(0, 2))
+		selectedFileName.grid(sticky=W, row=3, column=0, padx=(5, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=4, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=4, column=0, pady=(2, 2))
 
 		#----------------------
 		#this is the save destination
 
-		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "++ Select the destination of the further parsed data.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=10, pady=(2, 2))
+		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=5, pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(0, 2))
+		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=7, padx=(7, 0), pady=(0, 2))
+		destinationLabel.grid(sticky=W, row=7, padx=(5, 0), pady=(2, 2))
 
-		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=40, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=8, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=8, column=0, pady=(2, 2))
 
 		#-----------------------
 		#this will start the tool
 
 		#Start the tool now
-		startToolDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		startToolDesc = Text(bodyFrame, bg="#323232", fg="#ffffff", relief=FLAT, width=35, height=2, wrap=WORD, highlightthickness=0)
 		startToolDesc.insert('1.0', "++ Start the tool by pressing the button below.")
 		startToolDesc.config(state=DISABLED)
-		startToolDesc.grid(sticky=W, row=9, column=0, padx=10, pady=(2,2))
+		startToolDesc.grid(sticky=W, row=9, column=0, padx=5, pady=(2,2))
 
 		path = self.get_file_path()
 
 		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.parseIndirect(path))
-		startToolButton.grid(sticky=W, row=10, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton.grid(sticky=W, row=10, column=0, padx=(7, 0), pady=(2, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
