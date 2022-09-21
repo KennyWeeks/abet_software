@@ -19,7 +19,9 @@ class EmailList:
 
 	__terminal = None
 
-	def __init__(self, col, sp, op, tm, settingsP):
+	__columnAssociations = None
+
+	def __init__(self, col, sp, op, tm, cv, settingsP):
 
 		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
@@ -37,13 +39,21 @@ class EmailList:
 
 		self.__terminal = tm
 
+		self.__columnAssociations = cv
+
+		print(self.__columnAssociations)
+
 		self.__terminal.enterLine("Starting tool ...")
 		self.__terminal.idle_task()
 
 	def createFile(self):
 		self.__terminal.enterLine("Opening schedule file ...")
 		self.__terminal.idle_task()
-		classRoster = pd.read_excel(self.__schedulePath)
+		fileExtension = os.path.splitext(self.__schedulePath)
+		if fileExtension[1] == ".xlsx":
+			classRoster = pd.read_excel(self.__schedulePath)
+		else:
+			classRoster = pd.read_csv(self.__schedulePath)
 		columns = list(classRoster.columns)
 		classRoster = classRoster.to_numpy()
 
@@ -52,11 +62,17 @@ class EmailList:
 		self.__terminal.enterLine("Finding the index of the user selected headers ...")
 		self.__terminal.idle_task()
 
-		for col in self.__columns:
+		"""for col in self.__columns:
 			for cols in columns:
 				if col == cols:
 					indexOfColumnsPicked.append(columns.index(col))
-					break
+					break"""
+		for keys in self.__columnAssociations.keys():
+			for col in columns:
+				if self.__columnAssociations[keys][0] == col:
+					self.__columnAssociations[keys].append(columns.index(col))
+
+		print(self.__columnAssociations)
 
 		finalSetOfClasses = list()
 
@@ -67,22 +83,21 @@ class EmailList:
 
 		for clss in classRoster:
 			for c in self.__CLASSES:
-				for index in indexOfColumnsPicked:
-					if str(clss[index]).strip() == c:
-						finalVals = []
-						for ind in indexOfColumnsPicked:
-							finalVals.append(str(clss[ind]).strip())
-						professorsDict[str(clss[indexOfColumnsPicked[-1]])] = []
-						finalSetOfClasses.append(finalVals)
-						break
+				if str(clss[self.__columnAssociations["Class #"][-1]]).strip() == c:
+					finalVals = []
+					for keys in self.__columnAssociations.keys():
+						finalVals.append(str(clss[self.__columnAssociations[keys][-1]]).strip())
+					professorsDict[str(clss[self.__columnAssociations["Professor"][-1]])] = []
+					finalSetOfClasses.append(finalVals)
+					break
 
 		self.__terminal.enterLine("Creating professor association dictionary ...")
 		self.__terminal.idle_task()
 
 		for profs in professorsDict.keys():
 			for clss in finalSetOfClasses:
-				if clss[-1] == profs:
-					professorsDict[profs].append("CS" + clss[0] + "/" + clss[1])
+				if clss[0] == profs:
+					professorsDict[profs].append("CS" + clss[2] + "/" + clss[3])
 
 		professorsDict["No Professor Available"] = professorsDict['nan']
 		del professorsDict['nan']

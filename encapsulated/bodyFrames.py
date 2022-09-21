@@ -5,6 +5,7 @@ from tkinter import filedialog as fd
 from tkinter import ttk
 import re
 import pandas as pd
+import numpy as np
 from toolsObjs.exitInt import ExitInt
 from toolsObjs.readIndirect import ReadIndirect
 from toolsObjs.parseIndirect import ParseIndirect
@@ -258,6 +259,13 @@ class BodyFrame(ActionMethods):
 			self.__filenames[i] = "" #even if nothing is provided, I want the dictionary to start getting filed
 		else:
 			#this is if there is no file selected, add the label so the user can see there file selected
+			splitText = os.path.splitext(filename)
+			print(splitText[1])
+			if splitText[1] != ".xlsx" and splitText[1] != ".csv":
+				self.__terminal.enterLine("File needs to be .xlsx or .csv")
+				return
+
+			#this will run if everything works
 			pos = [m.start() for m in re.finditer("/", filename)]
 			file = filename[pos[-1]+1:]
 			for c in bf.winfo_children():
@@ -290,26 +298,26 @@ class BodyFrame(ActionMethods):
 						if str(type(ch)) == "<class 'tkinter.OptionMenu'>":
 							ch.grid_forget()
 
+			c = 2
+
 			for i in range(len(self.__dropDownOpts)):
-				dropOne = OptionMenu(dp, self.__dropDownValues[0], *self.__dropDownOpts[0])
-				dropOne.config(width=5)
-				dropOne.grid(sticky=W, row=2, column=0)
-
-				dropTwo = OptionMenu(dp, self.__dropDownValues[1], *self.__dropDownOpts[1])
-				dropTwo.config(width=5)
-				dropTwo.grid(sticky=W, row=2, column=1)
-
-				dropThree = OptionMenu(dp, self.__dropDownValues[2], *self.__dropDownOpts[2])
-				dropThree.config(width=5)
-				dropThree.grid(sticky=W, row=2, column=2)
-
+				row = ((i + 1) * 2)
+				dropDown = OptionMenu(dp, self.__dropDownValues[i], *self.__dropDownOpts[i])
+				dropDown.config(width=5)
+				dropDown.grid(sticky=W, row=row, column=0)
 
 	def getHeaderOfFiles(self, file, frame, bf, cv, name, dp):
 		#remove the label from the frame
 		self.deleteChildren(False, bf, name, frame, cv)
 
 		#add the checkboxes to the newly cleared frame
-		pandasData = pd.read_excel(file)
+		fileExtension = os.path.splitext(file)
+		if fileExtension[1] == ".csv":
+			pandasData = pd.read_csv(file)
+		else:
+			pandasData = pd.read_excel(file)
+
+		#pandasData = pd.read_excel(file)
 		r=0
 		self.__checkBoxes[name] = dict()
 		for col in pandasData.columns:
@@ -495,19 +503,24 @@ class BodyFrame(ActionMethods):
 
 		dropDownFrame.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=(2, 2))
 
-		labelOne = Label(dropDownFrame, text="Profressor", bg="#323232", fg="#ffffff", width=11)
+		labelOne = Label(dropDownFrame, text="Professor", bg="#323232", fg="#ffffff")
 		labelOne.grid(sticky=W, row=1, column=0)
 
-		labelTwo = Label(dropDownFrame, text="Email", bg="#323232", fg="#ffffff", width=11)
-		labelTwo.grid(sticky=W, row=1, column=1)
+		labelTwo = Label(dropDownFrame, text="Email", bg="#323232", fg="#ffffff")
+		labelTwo.grid(sticky=W, row=3, column=0)
 
-		labelThree = Label(dropDownFrame, text="Classes", bg="#323232", fg="#ffffff", width=11)
-		labelThree.grid(sticky=W, row=1, column=2)
+		labelThree = Label(dropDownFrame, text="Class #", bg="#323232", fg="#ffffff")
+		labelThree.grid(sticky=W, row=5, column=0)
+
+		labelFour = Label(dropDownFrame, text="Section #", bg="#323232", fg="#ffffff")
+		labelFour.grid(sticky=W, row=7, column=0)
 
 		self.__dropDownValues.append(StringVar())
 		self.__dropDownValues.append(StringVar())
 		self.__dropDownValues.append(StringVar())
+		self.__dropDownValues.append(StringVar())
 
+		self.__dropDownOpts.append(["----"])
 		self.__dropDownOpts.append(["----"])
 		self.__dropDownOpts.append(["----"])
 		self.__dropDownOpts.append(["----"])
@@ -515,6 +528,7 @@ class BodyFrame(ActionMethods):
 		self.__dropDownValues[0].set(self.__dropDownOpts[0][0])
 		self.__dropDownValues[1].set(self.__dropDownOpts[1][0])
 		self.__dropDownValues[2].set(self.__dropDownOpts[2][0])
+		self.__dropDownValues[3].set(self.__dropDownOpts[3][0])
 
 		dropOne = OptionMenu(dropDownFrame, self.__dropDownValues[0], *self.__dropDownOpts[0])
 		dropOne.config(width=5)
@@ -522,11 +536,15 @@ class BodyFrame(ActionMethods):
 
 		dropTwo = OptionMenu(dropDownFrame, self.__dropDownValues[1], *self.__dropDownOpts[1])
 		dropTwo.config(width=5)
-		dropTwo.grid(sticky=W, row=2, column=1)
+		dropTwo.grid(sticky=W, row=4, column=0)
 
 		dropThree = OptionMenu(dropDownFrame, self.__dropDownValues[2], *self.__dropDownOpts[2])
 		dropThree.config(width=5)
-		dropThree.grid(sticky=W, row=2, column=2)
+		dropThree.grid(sticky=W, row=6, column=0)
+
+		dropFour = OptionMenu(dropDownFrame, self.__dropDownValues[3], *self.__dropDownOpts[3])
+		dropFour.config(width=5)
+		dropFour.grid(sticky=W, row=8, column=0)
 
 		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
@@ -562,7 +580,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d, path))
+		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, drop=self.__dropDownValues: self.emailList(f, c, d, drop, path))
 		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()

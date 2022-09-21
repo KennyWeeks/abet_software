@@ -272,7 +272,7 @@ class ActionMethods:
 	
 	#1) EMAIL LIST
 	#this one is specific to the "Email List" tag, this will start the tool
-	def emailList(self, filenames, checkBoxes, directory, settingsP):
+	def emailList(self, filenames, checkBoxes, directory, dropDown, settingsP):
 		startTool = True #this will be used to determine whether to start the tool or not, it is a unique bool for each frame
 		args = [] #these are the arguments pushed to the tool
 
@@ -295,7 +295,7 @@ class ActionMethods:
 					self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
 					startTool = False
 				else:
-					if len(checkB) != 3:
+					if len(checkB) != 4:
 						self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
 						startTool = False
 					else:
@@ -314,10 +314,17 @@ class ActionMethods:
 			self.__terminal.enterLine("You need to provide a save directory to start the tool.")
 			startTool = False
 
+		columnDict = {"Professor": [], "Email": [], "Class #": [], "Section #": []}
+
+		ind = 0
+		for key in columnDict.keys():
+			columnDict[key].append(dropDown[ind].get())
+			ind += 1
+
 		#start the tool if possible
 		if startTool:
 			print(args)
-			el = EmailList(args[1], args[0], args[2], self.__terminal, settingsP)
+			el = EmailList(args[1], args[0], args[2], self.__terminal, columnDict, settingsP)
 			el.createFile()
 
 
