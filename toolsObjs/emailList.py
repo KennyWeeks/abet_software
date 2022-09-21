@@ -68,9 +68,16 @@ class EmailList:
 					indexOfColumnsPicked.append(columns.index(col))
 					break"""
 		for keys in self.__columnAssociations.keys():
+			found = False
 			for col in columns:
 				if self.__columnAssociations[keys][0] == col:
 					self.__columnAssociations[keys].append(columns.index(col))
+					found = True
+					break
+
+			if not found:
+				self.__columnAssociations[keys].append(-1)
+				
 
 		print(self.__columnAssociations)
 
@@ -86,7 +93,10 @@ class EmailList:
 				if str(clss[self.__columnAssociations["Class #"][-1]]).strip() == c:
 					finalVals = []
 					for keys in self.__columnAssociations.keys():
-						finalVals.append(str(clss[self.__columnAssociations[keys][-1]]).strip())
+						if self.__columnAssociations[keys][-1] != -1:
+							finalVals.append(str(clss[self.__columnAssociations[keys][-1]]).strip())
+						else:
+							finalVals.append("")
 					professorsDict[str(clss[self.__columnAssociations["Professor"][-1]])] = []
 					finalSetOfClasses.append(finalVals)
 					break

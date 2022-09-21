@@ -301,8 +301,10 @@ class BodyFrame(ActionMethods):
 			c = 2
 
 			for i in range(len(self.__dropDownOpts)):
+				print(i)
 				row = ((i + 1) * 2)
 				dropDown = OptionMenu(dp, self.__dropDownValues[i], *self.__dropDownOpts[i])
+				dropDown.config(bg="#ff00ff")
 				dropDown.config(width=5)
 				dropDown.grid(sticky=W, row=row, column=0)
 
@@ -503,6 +505,9 @@ class BodyFrame(ActionMethods):
 
 		dropDownFrame.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=(2, 2))
 
+		self.__dropDownValues = []
+		self.__dropDownOpts = []
+
 		labelOne = Label(dropDownFrame, text="Professor", bg="#323232", fg="#ffffff")
 		labelOne.grid(sticky=W, row=1, column=0)
 
@@ -617,9 +622,10 @@ class BodyFrame(ActionMethods):
 		------------------------"""
 		#this is for later, this just needs to be defined here
 		scheduleFrame = Frame(bodyFrame, width=330, name="scFm") #scFm == scheduleFrame
+		dropDownFrame = Frame(bodyFrame, width=320, height=30, name="dropFrame")
 
 		#this will prompt the user to select a file for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, None))
+		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, dropDownFrame))
 		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(0, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
@@ -643,16 +649,59 @@ class BodyFrame(ActionMethods):
 		dividingLabel.grid(sticky=W, row=7, column=0, pady=(0, 2))
 
 		"""--------------------------
+		#So this is where the headers that have been selected will be stored into a dropdown menu that will determine
+		#how the columns are used by the tool
+		------------------------""" 
+		dropDownDescription = Text(bodyFrame, bg="#323232", width=40, height=3, wrap=WORD, highlightthickness=0)
+		dropDownDescription.insert('1.0', "++ When the header columns are selected, you need to choose which column will be for specific labels listed.")
+		dropDownDescription.config(state=DISABLED)
+		dropDownDescription.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(0, 2))
+
+		dropDownFrame.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=(2, 2))
+
+		labelThree = Label(dropDownFrame, text="Class #", bg="#323232", fg="#ffffff")
+		labelThree.grid(sticky=W, row=1, column=0)
+
+		labelFour = Label(dropDownFrame, text="Section #", bg="#323232", fg="#ffffff")
+		labelFour.grid(sticky=W, row=3, column=0)
+
+		self.__dropDownValues = []
+		self.__dropDownOpts = []
+
+		self.__dropDownValues.append(StringVar())
+		self.__dropDownValues.append(StringVar())
+
+		self.__dropDownOpts.append(["----"])
+		self.__dropDownOpts.append(["----"])
+
+		self.__dropDownValues[0].set(self.__dropDownOpts[0][0])
+		self.__dropDownValues[1].set(self.__dropDownOpts[1][0])
+
+		dropOne = OptionMenu(dropDownFrame, self.__dropDownValues[0], *self.__dropDownOpts[0])
+		dropOne.config(width=5)
+		dropOne.grid(sticky=W, row=2, column=0)
+
+		dropTwo = OptionMenu(dropDownFrame, self.__dropDownValues[1], *self.__dropDownOpts[1])
+		dropTwo.config(width=5)
+		dropTwo.grid(sticky=W, row=4, column=0)
+
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=10, column=0, pady=(0, 2))
+
+		"""--------------------------
 		#This will allow the users to name the abet cabinet that is used for the semester
 		------------------------"""
 		entryDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		entryDesc.insert('1.0', "++ Enter the name of the folder that will be used for the cabinet")
 		entryDesc.config(state=DISABLED)
-		entryDesc.grid(sticky=W, row=8, column=0, padx=(10, 0), pady=(2, 2))
+		entryDesc.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
 
 		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
 		entryBox.insert(0, "Enter a folder name here")
-		entryBox.grid(sticky=W, row=9, column=0, padx=(10, 0), pady=5)
+		entryBox.grid(sticky=W, row=12, column=0, padx=(10, 0), pady=5)
 		entryBox.config(insertbackground="#000000")
 
 		entryBox.bind("<Button-1>", lambda event, e=entryBox: self.entryClick(event, e))
@@ -660,7 +709,7 @@ class BodyFrame(ActionMethods):
 		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=10, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=13, column=0, pady=(0, 2))
 
 		"""----------------------------
 		#this will select the destination of the associated email file
@@ -668,18 +717,18 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		destinationOfResutlingFile.insert('1.0', "++ Select the destination for ABET Cabinet created by the tool.")
 		destinationOfResutlingFile.config(state=DISABLED)
-		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(10, 0), pady=(2, 2))
+		destinationOfResutlingFile.grid(sticky=W, row=14, column=0, padx=(10, 0), pady=(2, 2))
 
 		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
-		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(0, 2))
+		destinationButton.grid(sticky=W, row=15, column=0, padx=(7, 0), pady=(0, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
-		destinationLabel.grid(sticky=W, row=13, padx=(7, 0), pady=(0, 2))
+		destinationLabel.grid(sticky=W, row=16, padx=(7, 0), pady=(0, 2))
 
 		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
 		dividingLabel.insert('1.0', "------------------------------------------------------")
 		dividingLabel.config(state=DISABLED)
-		dividingLabel.grid(sticky=W, row=14, column=0, pady=(0, 2))
+		dividingLabel.grid(sticky=W, row=17, column=0, pady=(0, 2))
 		
 		"""----------------------------
 		This section will start the associated tool
@@ -687,12 +736,12 @@ class BodyFrame(ActionMethods):
 		startTool = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
 		startTool.insert('1.0', "++ Press the button below to start the tool.")
 		startTool.config(state=DISABLED)
-		startTool.grid(sticky=W, row=15, column=0, padx=(10, 0), pady=(2, 2))
+		startTool.grid(sticky=W, row=18, column=0, padx=(10, 0), pady=(2, 2))
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, e=entryBox: self.createFolder(e, f, c, d, path))
-		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(0, 10))
+		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, e=entryBox, dp=self.__dropDownValues: self.createFolder(e, f, c, d, dp, path))
+		startToolButton.grid(sticky=W, row=19, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))

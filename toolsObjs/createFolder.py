@@ -23,6 +23,8 @@ class CreateFolder:
 
 	__settings = None
 
+	__columnAssociation = None
+
 	def addCabinetStructure(self, path):
 		for fldrs in self.__settings["Subfolders"].keys():
 			try:
@@ -33,7 +35,7 @@ class CreateFolder:
 			for sbfldrs in self.__settings["Subfolders"][fldrs]:
 				os.mkdir(path + "/" + fldrs + "/" + sbfldrs)
 
-	def __init__(self, terminal, args, settingsP):
+	def __init__(self, terminal, args, cv, settingsP):
 		self.__terminal = terminal
 
 		self.__terminal.enterLine("Starting the tool ....")
@@ -47,6 +49,8 @@ class CreateFolder:
 
 		self.__saveDest = args[3]
 
+		self.__columnAssociation = cv
+
 		#open up the settings, and get the info needed to get this thing running
 		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
@@ -59,22 +63,34 @@ class CreateFolder:
 
 	def createCabinet(self):
 		self.__terminal.enterLine("Opening the provided file ...")
-		rosterArr = pd.read_excel(self.__classFile)
+		fileExtension = os.path.splitext(self.__classFile)
+		if fileExtension[1] == ".xlsx":
+			rosterArr = pd.read_excel(self.__classFile)
+		else:
+			rosterArr= pd.read_csv(self.__classFile)
 
 		#get the index of the columns selected by the user
 		indexes = list() #these are the index of the column selected by the user
-		for ind in self.__headers:
+		columns = list(rosterArr.columns)
+		for col in rosterArr.columns:
+			for keys in self.__columnAssociation.keys():
+				if col == self.__columnAssociation[keys][0]:
+					
+					self.__columnAssociation[keys].append(columns.index(col))
+		"""for ind in self.__headers:
 			c = 0
 			for col in rosterArr.columns:
 				if col == ind:
 					indexes.append(c)
 					break
 
-				c+= 1
+				c+= 1"""
 
 		#start building the cabinet here
 		self.__terminal.enterLine("Parsing file for data associated with headers selected ...")
 		rosterArr = rosterArr.to_numpy()
+
+		print(self.__columnAssociation)
 
 		cabinetFolders = list()
 
@@ -84,7 +100,13 @@ class CreateFolder:
 			#and for the columns in the roster
 			for clss in rosterArr:
 
-				#and for the user chosen index to get this thing running
+				item = list()
+				if c == str(clss[self.__columnAssociation["Class #"][-1]]).strip():
+					item.append(clss[self.__columnAssociation["Class #"][-1]])
+					item.append(clss[self.__columnAssociation["Section #"][-1]])
+
+				cabinetFolders.append(item)
+				"""#and for the user chosen index to get this thing running
 				for i in indexes:
 					item = list()
 					#see if the classes defined match any of the classes in the file
@@ -92,7 +114,7 @@ class CreateFolder:
 						for j in indexes:
 							item.append(clss[j]) #save all the data associated with the indexes chosen
 						cabinetFolders.append(item) #save this for later
-						break
+						break"""
 		
 		self.__terminal.enterLine("Making the home directory ...")
 		try:

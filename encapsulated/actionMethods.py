@@ -318,6 +318,11 @@ class ActionMethods:
 
 		ind = 0
 		for key in columnDict.keys():
+			if key == "Professor" or key == "Class #" or key == "Section #":
+				if dropDown[ind].get() == "----":
+					self.__terminal.enterLine("Make sure a columne is chosen for at least the Professors, Class #, and Section #")
+					startTool = False
+					break
 			columnDict[key].append(dropDown[ind].get())
 			ind += 1
 
@@ -332,7 +337,7 @@ class ActionMethods:
 
 	#2) CREATE ABET CABINET
 	#this tool will trigger the "Create ABET Cabinet" folder
-	def createFolder(self, e, filenames, checkBoxes, directory, settingsPath):
+	def createFolder(self, e, filenames, checkBoxes, directory, dropDown, settingsPath):
 		startTool = True
 		args = list()
 
@@ -378,10 +383,21 @@ class ActionMethods:
 			self.__terminal.enterLine("You need to provide a save directory to start the tool.")
 			startTool = False
 
+		columnDict = {"Class #": [], "Section #": []}
+
+		ind = 0
+		for key in columnDict.keys():
+			if dropDown[ind].get() == "----":
+				self.__terminal.enterLine("Make sure a column is chosen for both Class #, and Section #")
+				startTool = False
+				break
+			columnDict[key].append(dropDown[ind].get())
+			ind += 1
+
 		#check if the tool can be started
 		if startTool:
 			#self.__terminal.enterLine(args)
-			inst = CreateFolder(self.__terminal, args, settingsPath)
+			inst = CreateFolder(self.__terminal, args, columnDict, settingsPath)
 			inst.createCabinet()
 			#self.__terminal.runProcess("tools/createFolder.py", args)
 
