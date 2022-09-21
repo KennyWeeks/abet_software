@@ -28,7 +28,7 @@ class LiveTerminal:
 			self.__lineNum += 1
 
 	def __init__(self, root):
-		self.__terminal = Text(root, bg="#ffffff", fg="#000000", height=8, highlightthickness=0, cursor="arrow", wrap=WORD)
+		self.__terminal = Text(root, bg="#ffffff", fg="#000000", height=7, highlightthickness=0, cursor="arrow", wrap=WORD)
 		self.__terminal.bind("<Key>", lambda event: "break")
 		self.__terminal.place(x=0, y=255, width=350)
 		self.__parent = root

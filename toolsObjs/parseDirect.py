@@ -1,6 +1,6 @@
 import sys
 import re
-import docx2txt
+#import docx2txt
 import os
 import pandas
 import numpy as np

@@ -6,10 +6,10 @@ from tkinter import ttk
 import re
 import pandas as pd
 from toolsObjs.exitInt import ExitInt
-#from toolsObjs.readIndirect import ReadIndirect
+from toolsObjs.readIndirect import ReadIndirect
 from toolsObjs.parseIndirect import ParseIndirect
 from toolsObjs.parseDirect import ParseDirect
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 import json
 import sys
@@ -163,6 +163,43 @@ class BodyFrame(ActionMethods):
 	def readIndirect(self, e):
 		startTool = True
 		args = list() #these are the arguments pushed to the class that starts the tool
+		if len(self.__directory.keys()) == 2:
+			if self.__directory["0"] == "":
+				self.__terminal.enterLine("Please include the directory with the indirect assessment files")
+				startTool = False
+			else:
+				args.append(self.__directory["0"])
+
+			if self.__directory["1"] == "":
+				self.__terminal.enterLine("Please include the save directory for the final data")
+				startTool = False
+			else:
+				args.append(self.__directory["1"])
+		else:
+			startTool = False
+			self.__terminal.enterLine("Please enter both directories to start the tool")
+
+		#get the name of the .csv file
+		if e.get().strip() == "Enter a file name here" or e.get().strip() == "":
+			self.__terminal.enterLine("Please provide a name for the final data file.")
+			startTool = False
+		else:
+			args.append(e.get().strip())
+
+		#this will start the tool
+		if startTool:
+			self.__terminal.enterLine("Works")
+			self.__terminal.enterLine("Starting the tool ... ")
+			readInd = ReadIndirect(self.__terminal, args[0], args[1], args[2])
+			#readInd.readTool()
+		else:
+			self.__terminal.enterLine("Tool will not start.")
+
+		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++")
+
+		#readInd = ReadIndirect(self.__terminal)
+		"""startTool = True
+		args = list() #these are the arguments pushed to the class that starts the tool
 
 		if len(self.__directory.keys()) == 2:
 			if self.__directory["0"] == "":
@@ -194,7 +231,7 @@ class BodyFrame(ActionMethods):
 		else:
 			self.__terminal.enterLine("Tool will not start.")
 
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")"""
 
 
 	#8) PARSE INDIRECT
@@ -456,7 +493,7 @@ class BodyFrame(ActionMethods):
 		dropDownFrame = Frame(bodyFrame, width=300, height=30, name="dropFrame")
 
 		#this will prompt the user to select a file for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, dropDownFrame))
+		selectFileButton = Button(bodyFrame, text="Select Schedule File", width=18, command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, dropDownFrame))
 		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
@@ -536,7 +573,7 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(5, 0), pady=(2, 2))
 
-		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
+		destinationButton = Button(bodyFrame, text="Select Save Directory", width=18, command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
 		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
@@ -557,7 +594,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d, path))
+		startToolButton = Button(bodyFrame, text="Start Tool", width=10, command=lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory: self.emailList(f, c, d, path))
 		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
@@ -596,7 +633,7 @@ class BodyFrame(ActionMethods):
 		scheduleFrame = Frame(bodyFrame, width=300, name="scFm") #scFm == scheduleFrame
 
 		#this will prompt the user to select a file for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Schedule File", command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, None))
+		selectFileButton = Button(bodyFrame, text="Select Schedule File", width=18, command=lambda: self.getFile("scheduleFileName", "0", scheduleFrame, bodyFrame, canvas, None))
 		selectFileButton.grid(sticky=W, row=3, column=0, padx=(7, 5), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="scheduleFileName")
@@ -627,7 +664,7 @@ class BodyFrame(ActionMethods):
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=8, column=0, padx=(5, 0), pady=(2, 4))
 
-		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
+		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0, font=(20))
 		entryBox.insert(0, "Enter a folder name here")
 		entryBox.grid(sticky=W, row=9, column=0, padx=(5, 0), pady=5)
 		entryBox.config(insertbackground="#000000")
@@ -647,7 +684,7 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=11, column=0, padx=(5, 0), pady=(2, 2))
 
-		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
+		destinationButton = Button(bodyFrame, text="Select Save Directory", width=18, command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
 		destinationButton.grid(sticky=W, row=12, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
@@ -668,7 +705,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path() #this is the path to the settings.json page, which changes based on the environment, so that's why I create this function
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command= lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, e=entryBox: self.createFolder(e, f, c, d, path))
+		startToolButton = Button(bodyFrame, text="Start Tool", width=10, command= lambda f=self.__filenames, c=self.__checkBoxes, d=self.__directory, e=entryBox: self.createFolder(e, f, c, d, path))
 		startToolButton.grid(sticky=W, row=16, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
@@ -698,7 +735,7 @@ class BodyFrame(ActionMethods):
 		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=5, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		selectFolderButton = Button(bodyFrame, text="Select ABET Folder to Audit", command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "auditCabinet", "0"))
+		selectFolderButton = Button(bodyFrame, text="Select ABET Folder to Audit", width=23, command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "auditCabinet", "0"))
 		selectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="auditCabinet")
@@ -774,7 +811,7 @@ class BodyFrame(ActionMethods):
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=19, column=0, padx=5, pady=(2, 2))
 
-		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#000000", highlightthickness=0)
+		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#000000", highlightthickness=0, font=(20))
 		entryBox.insert(0, "Enter a folder name here")
 		entryBox.grid(sticky=W, row=20, column=0, padx=5, pady=5)
 		entryBox.config(insertbackground="#000000")
@@ -793,7 +830,7 @@ class BodyFrame(ActionMethods):
 		selectSaveDir.grid(sticky=W, row=22, column=0, padx=5, pady=(2,2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		selectFolderButton = Button(bodyFrame, text="Select Save Directory", command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "saveDir", "1"))
+		selectFolderButton = Button(bodyFrame, text="Select Save Directory", width=18, command=lambda x=165, y=65: self.getFolderForGrid(bodyFrame, "saveDir", "1"))
 		selectFolderButton.grid(sticky=W, row=23, column=0, padx=7, pady=(4,2))
 
 		selectedFolderName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="saveDir")
@@ -813,7 +850,7 @@ class BodyFrame(ActionMethods):
 		selectFileDesc.grid(sticky=W, row=26, column=0, padx=10, pady=(2,2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Email List", command=lambda x=165, y=65: self.getFile("emlist", "0", None, bodyFrame, canvas))
+		selectFileButton = Button(bodyFrame, text="Select Email List", width=14, command=lambda x=165, y=65: self.getFile("emlist", "0", None, bodyFrame, canvas))
 		selectFileButton.grid(sticky=W, row=27, column=0, padx=7, pady=(4,2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="emlist")
@@ -833,7 +870,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path()
 
-		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, em, e, ce, se, ea, path))
+		strAuditB = Button(bodyFrame, text="Start Tool", width=10, command=lambda d=self.__directory, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, em, e, ce, se, ea, path))
 		strAuditB.grid(sticky=W, row=31, column=0, padx=7, pady=(2, 10))
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))
@@ -1098,7 +1135,7 @@ class BodyFrame(ActionMethods):
 		selectFolderDesc.grid(sticky=W, row=1, column=0, padx=(5, 0), pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		indirectFolderButton = Button(bodyFrame, text="Select Directory with Indirect Files", command=lambda:self.getFolderForGrid(bodyFrame, "indirectFolder", "0"))
+		indirectFolderButton = Button(bodyFrame, text="Select Directory with Indirect Files", width=28, command=lambda:self.getFolderForGrid(bodyFrame, "indirectFolder", "0"))
 		indirectFolderButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		indirectFolderLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="indirectFolder")
@@ -1117,7 +1154,7 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=(5, 0), pady=(2, 2))
 
-		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "1"))
+		destinationButton = Button(bodyFrame, text="Select Save Directory", width=18, command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "1"))
 		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
@@ -1136,7 +1173,7 @@ class BodyFrame(ActionMethods):
 		entryDesc.config(state=DISABLED)
 		entryDesc.grid(sticky=W, row=9, column=0, padx=(5, 0), pady=(2, 2))
 
-		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0)
+		entryBox = Entry(bodyFrame, bg="#ffffff", fg="#bebebe", highlightthickness=0, font=(20))
 		entryBox.insert(0, "Enter a file name here")
 		entryBox.grid(sticky=W, row=10, column=0, padx=(5, 0), pady=5)
 		entryBox.config(insertbackground="#000000")
@@ -1156,7 +1193,7 @@ class BodyFrame(ActionMethods):
 		startToolDesc.config(state=DISABLED)
 		startToolDesc.grid(sticky=W, row=12, column=0, padx=5, pady=(2,2))
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.readIndirect(entryBox))
+		startToolButton = Button(bodyFrame, text="Start Tool", width=10, command=lambda: self.readIndirect(entryBox))
 		startToolButton.grid(sticky=W, row=13, column=0, padx=(7, 0), pady=(4, 10))
 
 		canvas.update_idletasks()
@@ -1186,7 +1223,7 @@ class BodyFrame(ActionMethods):
 		selectFileDesc.grid(sticky=W, row=1, column=0, padx=5, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Indirect Results File", command=lambda x=165, y=65: self.getFile("indirectAssessment", "0", None, bodyFrame, canvas))
+		selectFileButton = Button(bodyFrame, text="Select Indirect Results File", width=22, command=lambda x=165, y=65: self.getFile("indirectAssessment", "0", None, bodyFrame, canvas, None))
 		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(4, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="indirectAssessment")
@@ -1205,7 +1242,7 @@ class BodyFrame(ActionMethods):
 		destinationOfResutlingFile.config(state=DISABLED)
 		destinationOfResutlingFile.grid(sticky=W, row=5, column=0, padx=5, pady=(2, 2))
 
-		destinationButton = Button(bodyFrame, text="Select Save Directory", command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
+		destinationButton = Button(bodyFrame, text="Select Save Directory", width=18, command=lambda:self.getFolderForGrid(bodyFrame, "saveDirectory", "0"))
 		destinationButton.grid(sticky=W, row=6, column=0, padx=(7, 0), pady=(4, 2))
 
 		destinationLabel = Label(bodyFrame, text="+-----------> No Directory Selected", fg="#ffffff", bg="#323232", name="saveDirectory")
@@ -1227,7 +1264,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path()
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.parseIndirect(path))
+		startToolButton = Button(bodyFrame, text="Start Tool", width=10, command=lambda: self.parseIndirect(path))
 		startToolButton.grid(sticky=W, row=10, column=0, padx=(7, 0), pady=(2, 10))
 
 		canvas.update_idletasks()

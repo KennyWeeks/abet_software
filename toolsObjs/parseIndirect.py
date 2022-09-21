@@ -38,17 +38,13 @@ class ParseIndirect:
 
 		fl = open(os.path.join(settingsP, "settings.json"), "r")
 		data = json.load(fl)
-		print(data)
 
 		for keys in data["Classes"].keys():
-			print(keys)
 			for out in data["Classes"][keys]:
 				val = int(out)
 				self.__outcomeClassesList[out-1].append(keys)
 
 		self.__settings = data
-
-		print(self.__outcomeClassesList)
 
 	def startReading(self):
 		with open(self.__numericalDataLocation) as file:
@@ -138,6 +134,7 @@ class ParseIndirect:
 						self.__individualOutcomes["6"].append(individualLine)
 
 	def createResult(self):
+		print(self.__individualOutcomes)
 		df = pd.DataFrame(self.__percentageOutcome, columns=self.__headers)
 		df = df.sort_values(by=['Class', 'Section'])
 		df.to_csv(self.__saveDestination + "/percentages.csv")
@@ -146,11 +143,14 @@ class ParseIndirect:
 		for outcome in self.__individualOutcomes.keys():
 			self.__terminal.enterLine("Creating the individual outcome file for: " + outcome)
 			finalCalc = ["Total", 0, 0, 0, 0, 0, 0, 0]
+			print(self.__individualOutcomes[outcome])
 			for line in self.__individualOutcomes[outcome]:
 				for i in range(1, 8):
 					finalCalc[i] += float(line[i])
 
 			self.__individualOutcomes[outcome].append(finalCalc)
+
+			print(finalCalc)
 
 			lastLine = ["Percentages", ""]
 			for i in range(2, 8):
