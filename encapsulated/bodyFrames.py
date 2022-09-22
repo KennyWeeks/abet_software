@@ -7,8 +7,6 @@ import re
 import pandas as pd
 import numpy as np
 from toolsObjs.exitInt import ExitInt
-from toolsObjs.readIndirect import ReadIndirect
-from toolsObjs.parseIndirect import ParseIndirect
 from toolsObjs.parseDirect import ParseDirect
 from dotenv import load_dotenv
 import os
@@ -58,7 +56,6 @@ class BodyFrame(ActionMethods):
 			path = "."
 
 		return path
-
 
 	#--------------------------------------------------
 	#--------------------------------------------------
@@ -159,79 +156,6 @@ class BodyFrame(ActionMethods):
 
 		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
 
-	#7) READ INDIRECT
-	#this tool will trigger the "Read Indirect" tool
-	def readIndirect(self, e):
-		startTool = True
-		args = list() #these are the arguments pushed to the class that starts the tool
-
-		if len(self.__directory.keys()) == 2:
-			if self.__directory["0"] == "":
-				self.__terminal.enterLine("Please include the directory with the indirect assessment files")
-				startTool = False
-			else:
-				args.append(self.__directory["0"])
-
-			if self.__directory["1"] == "":
-				self.__terminal.enterLine("Please include the save directory for the final data")
-				startTool = False
-			else:
-				args.append(self.__directory["1"])
-		else:
-			startTool = False
-			self.__terminal.enterLine("Please enter both directories to start the tool")
-
-		if e.get().strip() == "Enter a file name here" or e.get().strip() == "":
-			self.__terminal.enterLine("Please provide a name for the final data file.")
-			startTool = False
-		else:
-			args.append(e.get().strip())
-
-		if startTool:
-			self.__terminal.enterLine("Starting the tool ... ")
-			readInd = ReadIndirect(args[0], args[1], args[2], self.__terminal)
-			readInd.readTool()
-		else:
-			self.__terminal.enterLine("Tool will not start.")
-
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
-
-
-	#8) PARSE INDIRECT
-	#this command will trigger the "Parse Indirect" tool
-	def parseIndirect(self, settingsP):
-		startTool = True
-		args = list()
-
-		if len(self.__filenames.keys()) != 0:
-			if self.__filenames["0"] == "":
-				self.__terminal.enterLine("Please enter the file that holds the indirect data.")
-				startTool = False
-			else:
-				args.append(self.__filenames["0"])
-		else:
-			self.__terminal.enterLine("Please enter the file that holds the indirect data.")
-			startTool = False
-
-		if len(self.__directory.keys()) != 0:
-			if self.__directory["0"] == "":
-				self.__terminal.enterLine("Please enter the save directory")
-				startTool = False
-			else:
-				args.append(self.__directory["0"])
-		else:
-			self.__terminal.enterLine("Please enter the save directory")
-			startTool = False
-
-		if startTool:
-			self.__terminal.enterLine("Starting the tool ... ")
-			parseInd = ParseIndirect(args[0], args[1], self.__terminal, settingsP)
-			parseInd.startReading()
-			parseInd.createResult()
-		else:
-			self.__terminal.enterLine("Tool will not Start.")
-
-		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
 	#--------------------------------------------------
 	#--------------------------------------------------
 
@@ -1229,7 +1153,7 @@ class BodyFrame(ActionMethods):
 		startToolDesc.config(state=DISABLED)
 		startToolDesc.grid(sticky=W, row=12, column=0, padx=10, pady=(2,2))
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.readIndirect(entryBox))
+		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda direct=self.__directory: self.readIndirect(entryBox, direct))
 		startToolButton.grid(sticky=W, row=13, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()
@@ -1259,7 +1183,7 @@ class BodyFrame(ActionMethods):
 		selectFileDesc.grid(sticky=W, row=1, column=0, padx=10, pady=(10, 2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Indirect Results File", command=lambda x=165, y=65: self.getFile("indirectAssessment", "0", None, bodyFrame, canvas))
+		selectFileButton = Button(bodyFrame, text="Select Indirect Results File", command=lambda x=165, y=65: self.getFile("indirectAssessment", "0", None, bodyFrame, canvas, None))
 		selectFileButton.grid(sticky=W, row=2, column=0, padx=(7, 0), pady=(0, 2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="indirectAssessment")
@@ -1300,7 +1224,7 @@ class BodyFrame(ActionMethods):
 
 		path = self.get_file_path()
 
-		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda: self.parseIndirect(path))
+		startToolButton = Button(bodyFrame, text="Start Tool", command=lambda files=self.__filenames, direct=self.__directory: self.parseIndirect(files, direct, path))
 		startToolButton.grid(sticky=W, row=10, column=0, padx=(7, 0), pady=(0, 10))
 
 		canvas.update_idletasks()

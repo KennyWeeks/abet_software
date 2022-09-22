@@ -3,25 +3,40 @@ from tkinter import *
 from toolsObjs.emailList import EmailList
 from toolsObjs.auditFolder import AuditFolder
 from toolsObjs.createFolder import CreateFolder
+from toolsObjs.readIndirect import ReadIndirect
+from toolsObjs.parseIndirect import ParseIndirect
 import os
 
 class ActionMethods:
+
+	"""
+	-----------------
+	This is just to remove the clutter from the bodyframes class,
+	these are essentially all the event driven methods that are triggered
+	by button presses.
+	-----------------
+	"""
 
 	__terminal = None #this is this methods copy of the terminal. It's the same terminal, just a copy
 
 	__radio = 1
 
 	def setTerminal(self, terminal):
+		#save an instance of the current terminal in use
 		self.__terminal = terminal
 
 	def terminalDestroy(self):
+		#destroy the instance of the current terminal
 		self.__terminal.destroy()
 
+	"""
+	I have no idea what these do
 	def retRadio(self):
 		return self.__radio
 
 	def changeRadio(self, val):
 		self.__radio = val
+	"""
 
 	def finalObjectsAddEnv(self, frame, row, cv, parent, name, obj, path, prt):
 
@@ -273,47 +288,83 @@ class ActionMethods:
 	#1) EMAIL LIST
 	#this one is specific to the "Email List" tag, this will start the tool
 	def emailList(self, filenames, checkBoxes, directory, dropDown, settingsP):
-		startTool = True #this will be used to determine whether to start the tool or not, it is a unique bool for each frame
-		args = [] #these are the arguments pushed to the tool
+		"""
+		Parameter Definition
+		+ filenames --> this is the dictionary that holds the files used
+		+ checkBoxes --> these are the headers of the columns that are used by the tool
+		+ directory --> this is the dictionary that holds the directories used
+		+ dropDown --> these are the dropdown values that define what columns are used by the tools
+		+ settingsP --> this is the path string that holds the settings file
+		"""
 
+		#----------------------------------------
+		#First Step
+
+		startTool = True #this flag will symbolize whether to start the tool or not
+		args = list() #these are the arguments pushed to the class when the tool is initialized
+
+		#This will check to see the filenames provided to get the tool running
 		if len(filenames.keys()) == 1:
+
+			#1) This will see if the schedule file is provided
 			if filenames["0"] == "":
 				self.__terminal.enterLine("Please provide a class schedule file.")
 				startTool = False
 			else:
+				#save this value
 				args.append(filenames["0"])
 
-				#this will append what was selected in the checkboxes
+				#if the file is provided, we have to see what 
+				#checkboxes were picked by the user
+				#We can look at the checkboxes selected here
 				allZero = True
 				checkB = list()
 				for keys in checkBoxes["scheduleFileName"].keys():
+
+					#iterate through all the checkboxes to see the set values
 					if checkBoxes["scheduleFileName"][keys].get() != 0:
 						checkB.append(keys)
 						allZero = False
 
 				if allZero:
-					self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
+					#if all the checkboxes are no selected, throw an error
+					self.__terminal.enterLine("Please select at least one column to use from the provided file to start the tool")
 					startTool = False
 				else:
-					if len(checkB) != 4:
+					#args.append(checkB)
+					if len(checkB) >= 4:
+						#we need to have at least two checkboxes picked to start the tool, 
+						#otherwise, this error is throw
 						self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
 						startTool = False
 					else:
 						args.append(checkB)
 		else:
+			#this will be triggered when the filename 
 			self.__terminal.enterLine("Please provide a class schedule file.")
 			startTool = False
 
+		#----------------------------------------
+		#Second Step
+
+		#check to see if save directory is provided
 		if len(directory.keys()) != 0:
+
+			#1) check if value of the save directory
 			if directory["0"] == "":
 				self.__terminal.enterLine("Please provide a save directory.")
 				startTool = False
 			else:
 				args.append(directory["0"])
 		else:
+			#this is triggered if the save directory isn't provided
 			self.__terminal.enterLine("You need to provide a save directory to start the tool.")
 			startTool = False
 
+		#----------------------------------------
+		#Third Step
+
+		#this will see the columns chosen by the user
 		columnDict = {"Professor": [], "Email": [], "Class #": [], "Section #": []}
 
 		ind = 0
@@ -325,6 +376,9 @@ class ActionMethods:
 					break
 			columnDict[key].append(dropDown[ind].get())
 			ind += 1
+
+		#----------------------------------------
+		#Final Step, start tool
 
 		#start the tool if possible
 		if startTool:
@@ -338,42 +392,80 @@ class ActionMethods:
 	#2) CREATE ABET CABINET
 	#this tool will trigger the "Create ABET Cabinet" folder
 	def createFolder(self, e, filenames, checkBoxes, directory, dropDown, settingsPath):
-		startTool = True
-		args = list()
+		"""
+		Parameter Definition
+		+ e --> this is the entrybox associated with the tool
+		+ filenames --> this is the dictionary that holds the files used
+		+ checkBoxes --> these are the headers of the columns that are used by the tool
+		+ directory --> this is the dictionary that holds the directories used
+		+ dropDown --> these are the dropdown values that define what columns are used by the tools
+		+ settingsPath --> this is the path string that holds the settings file
+		"""
 
-		#check if the schedule is provided
+		startTool = True #this flag will symbolize whether to start the tool or not
+		args = list() #these are the arguments pushed to the class when the tool is initialized
+
+		#----------------------------------------
+		#First Step
+
+		#A schedule file needs to be provided to start the tool
 		if len(filenames.keys()) != 0:
+
+			#1) Check if the file is provided
 			if filenames["0"] == "":
 				self.__terminal.enterLine("Please provide a class schedule file.")
 				startTool = False
 			else:
 				args.append(filenames["0"])
+
+				#if the file is provided, we have to see what 
+				#checkboxes were picked by the user
 				#We can look at the checkboxes selected here
 				allZero = True
 				checkB = list()
 				for keys in checkBoxes["scheduleFileName"].keys():
+					
+					#iterate through all the checkboxes to see the set values
 					if checkBoxes["scheduleFileName"][keys].get() != 0:
 						checkB.append(keys)
 						allZero = False
 				
 				if allZero:
+					#if all the checkboxes are no selected, throw an error
 					self.__terminal.enterLine("Please select at least one column to use from the provided file to start the tool")
 					startTool = False
 				else:
-					args.append(checkB)
+					#args.append(checkB)
+					if len(checkB) >= 2:
+						#we need to have at least two checkboxes picked to start the tool, 
+						#otherwise, this error is throw
+						self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
+						startTool = False
+					else:
+						args.append(checkB)
 
 		else:
+			#this is thrown if no file is picked
 			self.__terminal.enterLine("You need to provide a schedule file to start the tool.")
 			startTool = False
 
-		#check if the name is provided
+		#----------------------------------------
+		#Second Step
+
+		#See what the final folder will be named
 		if e.get().strip() == "Enter a folder name here" or e.get().strip() == "":
 			self.__terminal.enterLine("Enter a folder name to start using the tool.")
 			startTool = False
 		else:
 			args.append(e.get().strip())
 
+		#----------------------------------------
+		#Third Step
+
+		#this directory will be where the final roster is saved
 		if len(directory.keys()) != 0:
+
+			#1) Check the first key
 			if directory["0"] == "":
 				self.__terminal.enterLine("Please provide a save directory.")
 				startTool = False
@@ -383,6 +475,10 @@ class ActionMethods:
 			self.__terminal.enterLine("You need to provide a save directory to start the tool.")
 			startTool = False
 
+		#----------------------------------------
+		#Fourth Step
+
+		#See what columns were picked by the user
 		columnDict = {"Class #": [], "Section #": []}
 
 		ind = 0
@@ -394,12 +490,15 @@ class ActionMethods:
 			columnDict[key].append(dropDown[ind].get())
 			ind += 1
 
-		#check if the tool can be started
+		#----------------------------------------
+		#Final Step, start tool
+
 		if startTool:
-			#self.__terminal.enterLine(args)
+			#start the tool
 			inst = CreateFolder(self.__terminal, args, columnDict, settingsPath)
 			inst.createCabinet()
-			#self.__terminal.runProcess("tools/createFolder.py", args)
+		else:
+			self.__terminal.enterLine("This tool will not start")
 
 		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
 
@@ -494,3 +593,128 @@ class ActionMethods:
 
 		self.__terminal.enterLine("++++++++++++++++++++++++++++++++++++++++++++++++")
 
+	#7) READ INDIRECT
+	#this tool will trigger the "Read Indirect" tool
+	def readIndirect(self, entry, direct):
+		"""
+		Parameter Definition
+		+ entry --> this is the entrybox associated with the tool
+		+ direct --> this is the dictionary that holds the directories used
+		"""
+
+		startTool = True #this flag will symbolize whether to start the tool or not
+		args = list() #these are the arguments pushed to the class when the tool is initialized
+
+		#----------------------------------------
+		#First Step
+
+		#there are two directories expected to get this thing going
+		#we need to see if both are initialized, and grab their values
+		if len(direct.keys()) == 2:
+
+			#1) First Directory Check
+			if direct["0"] == "":
+				self.__terminal.enterLine("Please include the directory with the indirect assessment files")
+				startTool = False
+			else:
+				args.append(direct["0"])
+
+			#2) Second Directory Check
+			if direct["1"] == "":
+				self.__terminal.enterLine("Please include the save directory for the final data")
+				startTool = False
+			else:
+				args.append(direct["1"])
+		else:
+			#this is triggered when one, or none of the directories are set
+			startTool = False
+			self.__terminal.enterLine("Please enter both directories to start the tool")
+
+		#----------------------------------------
+		#Second Step
+
+		#this will check the value for the name chosen for the saved data
+		if entry.get().strip() == "Enter a file name here" or entry.get().strip() == "":
+			self.__terminal.enterLine("Please provide a name for the final data file.")
+			startTool = False
+		else:
+			args.append(entry.get().strip())
+
+		#----------------------------------------
+		#Final step, start tool
+
+		if startTool:
+			#if everything is set, then we can call the tool
+			self.__terminal.enterLine("Starting the tool ... ")
+			readInd = ReadIndirect(args[0], args[1], args[2], self.__terminal)
+			readInd.readTool()
+			self.__terminal.enterLine("Done")
+		else:
+			self.__terminal.enterLine("Tool will not start.")
+
+		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+
+	#8) PARSE INDIRECT
+	#this command will trigger the "Parse Indirect" tool
+	def parseIndirect(self, files, direct, settingsP):
+		"""
+		Parameter Definition
+		+ files --> this is the dictionary that holds the files used
+		+ direct --> this is the dictionary that holds the directories used
+		+ settingsP --> this is the path string that holds the settings file
+		"""
+
+		startTool = True #this flag will symbolize whether to start the tool or not
+		args = list() #these are the arguments pushed to the class when the tool is initialized
+
+		#----------------------------------------
+		#First Step
+
+		#For this tool, we need the file that was generated by the readIndirect tool
+		#so we need to check if the file has been set, and if so, get the value
+		if len(files.keys()) != 0:
+
+			#1) The only check for the file, so this still needs
+			#to be run, because the tool will set "" as the file value
+			#if the file dialog is closed without choosing a file
+			if files["0"] == "":
+				self.__terminal.enterLine("Please enter the file that holds the indirect data.")
+				startTool = False
+			else:
+				args.append(files["0"])
+		else:
+			#this is run if no file has been set
+			self.__terminal.enterLine("Please enter the file that holds the indirect data.")
+			startTool = False
+
+		#----------------------------------------
+		#Second Step
+
+		#A final save directory is also expected, so we will check for this here
+		if len(direct.keys()) != 0:
+
+			#1) There is only one check, which is the save directory for the 
+			#parsed files
+			if direct["0"] == "":
+				self.__terminal.enterLine("Please enter the save directory")
+				startTool = False
+			else:
+				args.append(direct["0"])
+		else:
+			self.__terminal.enterLine("Please enter the save directory")
+			startTool = False
+
+		#----------------------------------------
+		#Final step, start tool
+
+		if startTool:
+			#If everything is working, then we can just start the tool here
+			self.__terminal.enterLine("Starting the tool ... ")
+			parseInd = ParseIndirect(args[0], args[1], self.__terminal, settingsP)
+			parseInd.startReading()
+			parseInd.createResult()
+			self.__terminal.enterLine("Done")
+		else:
+			self.__terminal.enterLine("Tool will not Start.")
+
+		self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
