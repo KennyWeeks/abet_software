@@ -6,6 +6,8 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 import json
 import csv
+import pandas as pd
+import numpy as np
 
 class AuditFolder:
 
@@ -65,7 +67,7 @@ class AuditFolder:
 
 	#---------------------
 
-	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, em, settingsP):
+	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, em, emailInd, emstuff, settingsP):
 		#gPath --> global path
 		#sPath --> save path
 		#name --> output name
@@ -73,6 +75,18 @@ class AuditFolder:
 		#sE --> show empty
 		#eA --> email audit
 		#wA --> what to audit
+
+		if emailInd == 1:
+			self.__terminal = terminal
+			try:
+				emailList = pd.read_csv(em)
+			except:
+				terminal.enterLine("Couldn't read this file, it must be a csv file")
+				return
+
+			emailList = np.array(emailList)
+			self.emailData(emailList, emstuff[0], emstuff[1], emstuff[2])
+			return
 
 		self.__globalPath = gPath + "/"
 		self.__count = self.__globalPath.count("/")
@@ -260,26 +274,26 @@ class AuditFolder:
 			self.__descent = 0
 			self.__listEmpty = []
 
-	def emailData(self, output):
-		"""load_dotenv()
-		password = os.getenv("TESTPASS")
+	def emailData(self, output, email, password, content):
+		for row in output:
+			self.__terminal.enterLine("Sending an email to --> " + row[0])
+			self.__terminal.idle_task()
+			print(row[1].strip())
+			smtpObj = self.setUpSMTP(row[1], email)
+			self.sendMail(smtpObj, content, email, password)
 
-		for emails in output.keys():
-			smtpObj = self.setUpSMTP(emails)
-			self.sendMail(smtpObj, output[emails])"""
-
-	def setUpSMTP(contacts):
+	def setUpSMTP(self, contact, email):
 		msg = EmailMessage()
 		msg["Subject"] = "Automated ABET Audit"
-		msg["From"] = "weeksk2@unlv.nevada.edu"
-		msg["To"] = contacts
+		msg["From"] = email
+		msg["To"] = contact
 		msg.set_content('This is something \n\t\t I guess')
 		return msg
 
-	def sendMail(self, obj, message):
+	def sendMail(self, obj, message, email, password):
 		obj.set_content(message)
 		with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-			smtp.login("weeksk2@unlv.nevada.edu", PASSWORD)
+			smtp.login(email, password)
 			smtp.send_message(obj)
 
 	def addedStuff(self):

@@ -31,6 +31,7 @@ class CreateFolder:
 				os.mkdir(path + "/" + fldrs)
 			except:
 				self.__terminal.enterLine("There is a repeat of this class and section --> " + path)
+				self.__terminal.idle_task();
 				break
 			for sbfldrs in self.__settings["Subfolders"][fldrs]:
 				os.mkdir(path + "/" + fldrs + "/" + sbfldrs)
@@ -39,6 +40,7 @@ class CreateFolder:
 		self.__terminal = terminal
 
 		self.__terminal.enterLine("Starting the tool ....")
+		self.__terminal.idle_task()
 
 		#start assigning the variables here, from the args parameter
 		self.__classFile = args[0]
@@ -63,6 +65,7 @@ class CreateFolder:
 
 	def createCabinet(self):
 		self.__terminal.enterLine("Opening the provided file ...")
+		self.__terminal.idle_task()
 		fileExtension = os.path.splitext(self.__classFile)
 		if fileExtension[1] == ".xlsx":
 			rosterArr = pd.read_excel(self.__classFile)
@@ -86,8 +89,11 @@ class CreateFolder:
 
 				c+= 1"""
 
+		print(self.__columnAssociation)
+
 		#start building the cabinet here
 		self.__terminal.enterLine("Parsing file for data associated with headers selected ...")
+		self.__terminal.idle_task()
 		rosterArr = rosterArr.to_numpy()
 
 		print(self.__columnAssociation)
@@ -105,7 +111,7 @@ class CreateFolder:
 					item.append(clss[self.__columnAssociation["Class #"][-1]])
 					item.append(clss[self.__columnAssociation["Section #"][-1]])
 
-				cabinetFolders.append(item)
+					cabinetFolders.append(item)
 				"""#and for the user chosen index to get this thing running
 				for i in indexes:
 					item = list()
@@ -115,15 +121,20 @@ class CreateFolder:
 							item.append(clss[j]) #save all the data associated with the indexes chosen
 						cabinetFolders.append(item) #save this for later
 						break"""
+
+		print(cabinetFolders)
 		
 		self.__terminal.enterLine("Making the home directory ...")
+		self.__terminal.idle_task()
 		try:
 			os.mkdir(self.__saveDest + "/" + self.__folderName + "/")
 		except:
 			self.__terminal.enterLine("This folder name: " + self.__folderName + ", already exists in this location: " + self.__saveDest)
+			self.__terminal.idle_task()
 			return
 
 		self.__terminal.enterLine("Making the children folders ...")
+		self.__terminal.idle_task()
 		for cf in cabinetFolders:
 			home = self.__saveDest + "/" + self.__folderName + "/"
 
@@ -141,8 +152,10 @@ class CreateFolder:
 			home += folder
 
 			self.__terminal.enterLine("Working on " + folder)
+			self.__terminal.idle_task()
 			self.addCabinetStructure(home)
 			self.__terminal.enterLine("++++++++++++++++++++++")
+			self.__terminal.idle_task()
 
 		self.__terminal.enterLine("Finnished")
 

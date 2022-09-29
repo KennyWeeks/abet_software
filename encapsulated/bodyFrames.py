@@ -162,8 +162,59 @@ class BodyFrame(ActionMethods):
 	#--------------------------------------------------
 	#--------------------------------------------------
 	#These methods will be used to store data that will be pushed to the tools, and will generally be attached to button calls
+	def checkBoxChange(self, col, name, bf, dp):
+		"""
+		- bf --> bodyframe
+		- dp --> dropdown frame
+		"""
 
-	#this will save multiple files, and it will also position to the label
+		if dp != None:
+			for i in range(len(self.__dropDownOpts)):
+				if self.__checkBoxes[name][col].get() == 0:
+					self.__dropDownOpts[i].remove(col)
+				else:
+					self.__dropDownOpts[i].append(col)
+
+			for c in bf.winfo_children():
+				if str(c).find(name) != -1:
+					for ch in c.winfo_children():
+						if str(type(ch)) == "<class 'tkinter.OptionMenu'>":
+							ch.grid_forget()
+
+			c = 2
+
+			for i in range(len(self.__dropDownOpts)):
+				print(i)
+				row = ((i + 1) * 2)
+				dropDown = OptionMenu(dp, self.__dropDownValues[i], *self.__dropDownOpts[i])
+				dropDown.config(width=5)
+				dropDown.grid(sticky=W, row=row, column=0)
+
+	def getHeaderOfFiles(self, file, frame, bf, cv, name, dp):
+		#remove the label from the frame
+		self.deleteChildren(False, bf, name, frame, cv)
+
+		#add the checkboxes to the newly cleared frame
+		fileExtension = os.path.splitext(file)
+		if fileExtension[1] == ".csv":
+			pandasData = pd.read_csv(file)
+		else:
+			pandasData = pd.read_excel(file)
+
+		#pandasData = pd.read_excel(file)
+		r=0
+		self.__checkBoxes[name] = dict()
+		for col in pandasData.columns:
+			#lbl = Label(frame, text=col)
+			self.__checkBoxes[name][col] = IntVar()
+			chkBt = Checkbutton(frame, text=col, variable=self.__checkBoxes[name][col], command=lambda col=col, name=name: self.checkBoxChange(col, name, bf, dp), onvalue=1, offvalue=0, wraplength=300, justify=LEFT)
+			chkBt.grid(sticky=W, row=r, column=0)
+			r+=1
+
+		#This will update the canvas size
+		cv.update_idletasks()
+		cv.configure(scrollregion=bf.bbox("all"))
+
 	def getFile(self, name, i, frame, bf, cv, dp):
 		"""
 		-Parameter Desc
@@ -174,6 +225,7 @@ class BodyFrame(ActionMethods):
 		-bf --> bodyframe of the available data
 		-cv --> canvas that displays application
 		-dp --> drop down frame
+		-check --> get the checkboxes
 		"""
 
 		filename = fd.askopenfilename() #ask the user for the file
@@ -203,66 +255,17 @@ class BodyFrame(ActionMethods):
 			if frame != None:
 				self.getHeaderOfFiles(filename, frame, bf, cv, name, dp)
 
-	def checkBoxChange(self, col, name, bf, dp):
-		"""
-		- bf --> bodyframe
-		- dp --> dropdown frame
-		"""
-
-		if dp != None:
-			for i in range(len(self.__dropDownOpts)):
-				if self.__checkBoxes[name][col].get() == 0:
-					self.__dropDownOpts[i].remove(col)
-				else:
-					self.__dropDownOpts[i].append(col)
-
-			for c in bf.winfo_children():
-				if str(c).find(name) != -1:
-					for ch in c.winfo_children():
-						if str(type(ch)) == "<class 'tkinter.OptionMenu'>":
-							ch.grid_forget()
-
-			c = 2
-
-			for i in range(len(self.__dropDownOpts)):
-				print(i)
-				row = ((i + 1) * 2)
-				dropDown = OptionMenu(dp, self.__dropDownValues[i], *self.__dropDownOpts[i])
-				dropDown.config(bg="#ff00ff")
-				dropDown.config(width=5)
-				dropDown.grid(sticky=W, row=row, column=0)
-
-	def getHeaderOfFiles(self, file, frame, bf, cv, name, dp):
-		#remove the label from the frame
-		self.deleteChildren(False, bf, name, frame, cv)
-
-		#add the checkboxes to the newly cleared frame
-		fileExtension = os.path.splitext(file)
-		if fileExtension[1] == ".csv":
-			pandasData = pd.read_csv(file)
-		else:
-			pandasData = pd.read_excel(file)
-
-		#pandasData = pd.read_excel(file)
-		r=0
-		self.__checkBoxes[name] = dict()
-		for col in pandasData.columns:
-			#lbl = Label(frame, text=col)
-			self.__checkBoxes[name][col] = IntVar()
-			chkBt = Checkbutton(frame, text=col, variable=self.__checkBoxes[name][col], command=lambda col=col, name=name: self.checkBoxChange(col, name, bf, dp), onvalue=1, offvalue=0, wraplength=300, justify=LEFT)
-			chkBt.grid(sticky=W, row=r, column=0)
-			r+=1
-
-		#This will update the canvas size
-		cv.update_idletasks()
-		cv.configure(scrollregion=bf.bbox("all"))
-
 	#This will scan entry clicks to text boxes
 	def entryClick(self, event, entryBox):
 		#okay, this is kinda stupid, but that's because tkinter is pretty limited,
 		#there is a default text that I want to get rid of when the user clicks on the entry box
-		if entryBox.get().strip() == "Enter a folder name here" or entryBox.get().strip() == "Enter a file name here" or entryBox.get().strip() == "Class Name" or entryBox.get().strip() == "Outcomes" or entryBox.get().strip() == "Subfolder":
+		if entryBox.get().strip() == "Enter a folder name here" or entryBox.get().strip() == "Enter a file name here" or entryBox.get().strip() == "Class Name" or entryBox.get().strip() == "Outcomes" or entryBox.get().strip() == "Subfolder" or entryBox.get().strip() == "email@address.com" or entryBox.get().strip() == "password":
 			entryBox.delete(0, len(entryBox.get()))
+			entryBox.config(fg="#000000")
+
+	def entryClickText(self, event, entryBox):
+		if entryBox.get("1.0", END).strip() == "Email Content":
+			entryBox.delete("1.0", END)
 			entryBox.config(fg="#000000")
 
 	def getFolderForGrid(self, bf, name, i):
@@ -342,7 +345,7 @@ class BodyFrame(ActionMethods):
 		------------------------"""
 
 		#this canvas will hold the scrollbar, as well as the frame that will grow with the scrollbar
-		canvas = Canvas(self.__styleFrame, highlightthickness=0)
+		canvas = Canvas(self.__styleFrame, bg="#323232", highlightthickness=0)
 		canvas.pack(side=LEFT, fill=BOTH, expand=1)
 
 		#this is the scrollbar associated with the canvas
@@ -354,7 +357,7 @@ class BodyFrame(ActionMethods):
 		canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
 		#this is the bodyframe that will hold content of the application
-		bodyFrame = Frame(canvas)
+		bodyFrame = Frame(canvas, bg="#323232")
 
 		#this is like creating a window inside the canvas, that will grow, almost drawing the 
 		#tool as it expands
@@ -804,12 +807,12 @@ class BodyFrame(ActionMethods):
 		This section will allow the user to select the email file
 		------------------------"""
 		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
-		selectFileDesc.insert('1.0', "++ Select the file that holds the indirect assessment data.")
+		selectFileDesc.insert('1.0', "++ Select the emailFile.csv that was generated in the first tool.")
 		selectFileDesc.config(state=DISABLED)
 		selectFileDesc.grid(sticky=W, row=26, column=0, padx=10, pady=(2,2))
 
 		#this will prompt the user to select a file to use for this part of the tool
-		selectFileButton = Button(bodyFrame, text="Select Email List", command=lambda x=165, y=65: self.getFile("emlist", "0", None, bodyFrame, canvas))
+		selectFileButton = Button(bodyFrame, text="Select Email List", command=lambda x=165, y=65: self.getFile("emlist", "0", None, bodyFrame, canvas, None))
 		selectFileButton.grid(sticky=W, row=27, column=0, padx=5, pady=(0,2))
 
 		selectedFileName = Label(bodyFrame, text="+-----------> No File Selected", fg="#ffffff", bg="#323232", name="emlist")
@@ -821,16 +824,56 @@ class BodyFrame(ActionMethods):
 		dividingLabel.grid(sticky=W, row=29, column=0, pady=(0, 2))
 
 		"""------------------------
+		This section will ask if the user just wants to email something other than the audit
+		------------------------"""
+		selectFileDesc = Text(bodyFrame, bg="#323232", width=40, height=2, wrap=WORD, highlightthickness=0)
+		selectFileDesc.insert('1.0', "++ Please set up your email here if you are intending to use that feature")
+		selectFileDesc.config(state=DISABLED)
+		selectFileDesc.grid(sticky=W, row=30, column=0, padx=10, pady=(2,2))
+
+		entryBox1 = Entry(bodyFrame, bg="#ffffff", fg="#000000", highlightthickness=0)
+		entryBox1.insert(0, "email@address.com")
+		entryBox1.grid(sticky=W, row=32, column=0, padx=9, pady=5)
+		entryBox1.config(insertbackground="#000000")
+
+		entryBox1.bind("<Button-1>", lambda event, e=entryBox1: self.entryClick(event, e))
+
+		entryBox2 = Entry(bodyFrame, bg="#ffffff", fg="#000000", highlightthickness=0)
+		entryBox2.insert(0, "password")
+		entryBox2.grid(sticky=W, row=33, column=0, padx=9, pady=5)
+		entryBox2.config(insertbackground="#000000")
+
+		entryBox2.bind("<Button-1>", lambda event, e=entryBox2: self.entryClick(event, e))
+
+		sendEmailV = IntVar()
+
+		sendEmail = Checkbutton(bodyFrame, text="Send an email without the audit", variable=sendEmailV, onvalue=1, offvalue=0)
+		sendEmail.grid(sticky=W, row=34, column=0, pady=5, padx=5)
+
+		emailContent = Text(bodyFrame, bg="#ffffff", fg="#000000", height=8, width=35, highlightthickness=0)
+		emailContent.insert("1.0", "Email Content")
+		emailContent.grid(sticky=W, row=35, column=0, padx=10, pady=9)
+		emailContent.config(insertbackground="#000000")
+
+		emailContent.bind("<Button-1>", lambda event, e=emailContent: self.entryClickText(event, e))
+
+
+		dividingLabel = Text(bodyFrame, bg="#323232", width=45, height=1, wrap=WORD, highlightthickness=0)
+		dividingLabel.insert('1.0', "------------------------------------------------------")
+		dividingLabel.config(state=DISABLED)
+		dividingLabel.grid(sticky=W, row=36, column=0, pady=(0, 2))
+
+		"""------------------------
 		This section will allow the user to select the destination of the audit data
 		------------------------"""
 
 		startAudit = Label(bodyFrame, text="++ Start the audit", bg="#323232", fg="#ffffff")
-		startAudit.grid(sticky=W, row=30, column=0, padx=10, pady=(2,2))
+		startAudit.grid(sticky=W, row=37, column=0, padx=10, pady=(2,2))
 
 		path = self.get_file_path()
 
-		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV: self.auditFolder(d, em, e, ce, se, ea, path))
-		strAuditB.grid(sticky=W, row=31, column=0, padx=7, pady=(0, 10))
+		strAuditB = Button(bodyFrame, text="Start Tool", command=lambda d=self.__directory, em=self.__filenames, e=entryBox, ce=countEmptyV, se=showEmptyV, ea=emailAuditV, emind=sendEmailV, addy=entryBox1, pss=entryBox2, content=emailContent: self.auditFolder(d, em, e, ce, se, ea, emind, addy, pss, content, path))
+		strAuditB.grid(sticky=W, row=38, column=0, padx=7, pady=(0, 10))
 
 		canvas.update_idletasks()
 		canvas.configure(scrollregion=bodyFrame.bbox("all"))

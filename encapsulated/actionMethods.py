@@ -29,14 +29,11 @@ class ActionMethods:
 		#destroy the instance of the current terminal
 		self.__terminal.destroy()
 
-	"""
-	I have no idea what these do
 	def retRadio(self):
 		return self.__radio
 
 	def changeRadio(self, val):
 		self.__radio = val
-	"""
 
 	def finalObjectsAddEnv(self, frame, row, cv, parent, name, obj, path, prt):
 
@@ -332,7 +329,7 @@ class ActionMethods:
 					startTool = False
 				else:
 					#args.append(checkB)
-					if len(checkB) >= 4:
+					if len(checkB) < 4:
 						#we need to have at least two checkboxes picked to start the tool, 
 						#otherwise, this error is throw
 						self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
@@ -436,7 +433,8 @@ class ActionMethods:
 					startTool = False
 				else:
 					#args.append(checkB)
-					if len(checkB) >= 2:
+					if len(checkB) < 2:
+						print(checkB)
 						#we need to have at least two checkboxes picked to start the tool, 
 						#otherwise, this error is throw
 						self.__terminal.enterLine("Please select the correct number of columns in the order listed.")
@@ -504,9 +502,27 @@ class ActionMethods:
 
 	#4) AUDIT FOLDER
 	#this tool will trigger the "Audit folder" tool
-	def auditFolder(self, direct, email, entry, ce, se, ea, settingsP):
+	def auditFolder(self, direct, email, entry, ce, se, ea, emind, addy, pss, content, settingsP):
 		startTool = True #this is a flag to start the tool
 		args = [] #this is the arguments that are passed to the tool
+
+		if emind.get() == 1:
+			if len(email.keys()) == 1:
+				if email["0"] == "":
+					self.__terminal.enterLine("Enter the email list file created earlier.")
+					self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+					return
+				else:
+					args.append(email["0"])
+			else:
+				self.__terminal.enterLine("Enter the email list file created earlier.")
+				self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+				return 
+
+			emailStuff = [addy.get(), pss.get(), content.get("1.0", END)]
+			audit = AuditFolder(None, None, None, None, None, None, None, self.__terminal, args[0], emind.get(), emailStuff, settingsP)
+			self.__terminal.enterLine("+++++++++++++++++++++++++++++++++++++++++++++++")
+			return
 
 		#this will check to see if the two directories have been chosen
 		if len(direct.keys()) == 2:
