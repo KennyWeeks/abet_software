@@ -67,7 +67,7 @@ class AuditFolder:
 
 	#---------------------
 
-	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, em, emailInd, emstuff, settingsP):
+	def __init__(self, gPath, sPath, name, cE, sE, eA, wA, terminal, email, settingsP):
 		#gPath --> global path
 		#sPath --> save path
 		#name --> output name
@@ -76,7 +76,7 @@ class AuditFolder:
 		#eA --> email audit
 		#wA --> what to audit
 
-		if emailInd == 1:
+		"""if emailInd == 1:
 			self.__terminal = terminal
 			try:
 				emailList = pd.read_csv(em)
@@ -86,7 +86,7 @@ class AuditFolder:
 
 			emailList = np.array(emailList)
 			self.emailData(emailList, emstuff[0], emstuff[1], emstuff[2])
-			return
+			return"""
 
 		self.__globalPath = gPath + "/"
 		self.__count = self.__globalPath.count("/")
@@ -97,7 +97,7 @@ class AuditFolder:
 		self.__emailAudit = eA
 		self.__whatToAudit = wA
 		self.__terminal = terminal
-		self.__email = em
+		self.__email = email
 
 		if self.__whatToAudit != "All":
 			self.__auditAll = False
@@ -334,7 +334,11 @@ class AuditFolder:
 				profs[-1].append(row[0])
 				profs[-1].append(row[-1].strip("][").split(", "))
 
+		print(profs)
+
 		profsFile = open(self.__savePath + "/" + self.__outputName + "_profs.txt", "w")
+
+		#print(output)
 
 		for pros in profs:
 			profsFile.write(pros[0] +"\n")
@@ -342,6 +346,8 @@ class AuditFolder:
 				clssOps = clss.strip('\'').split("/")
 				cata = "cs" + clssOps[0][2:]
 				sec = clssOps[1]
+
+				print(cata, sec)
 
 				profsFile.write(cata + "\n")
 				profsFile.write("\t" + sec + "\n")
