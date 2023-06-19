@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shit</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+</head>
+<body class="h-screen w-screen overflow-hidden bg-slate-200">
+    <div class="w-screen h-screen relative">
+        <div class="absolute top-10 left-10 w-20 h-20 bg-white hover:bg-slate-300 rounded-full shadow-full hover:z-50" onClick="alrt()"></div>
+        <div class="absolute top-0 -left-20 h-screen w-10 bg-white" id="testing"></div>
+    </div>
+</body>
+<script type="text/javascript">
+    //I just want to try something
+    const alrt = () => {
+        let test = document.getElementById('testing')
+        let classes = test.getAttribute('class').split(' ')
+        classes[2]='left-0'
+        test.setAttribute('class', classes.join(' '))
+    }
+</script>
+</html>
